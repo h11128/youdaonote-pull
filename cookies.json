@@ -2,20 +2,44 @@
     "cookies": [
         [
             "YNOTE_CSTK",
-            "**",
+            "gSvKRlEa",
             ".note.youdao.com",
             "/"
         ],
         [
             "YNOTE_LOGIN",
-            "**",
+            "3||1758170707992",
             ".note.youdao.com",
             "/"
         ],
         [
             "YNOTE_SESS",
-            "**",
+            "v2|a49RuvxPumUfnLkMRfJB06yOMUl6MPL0qy0HlGO4Ul0wukfez64gyRTZh4puRfgu0PF0HJyOLPuRgyh4wLOMUW0gFhfwLk4kG0",
             ".note.youdao.com",
+            "/"
+        ],
+        [
+            "YNOTE_PERS",
+            "v2|urscookie||YNOTE||web||604800000||1758170707986||99.73.90.104||h11128@163.com||qF0MwuOLT4RwykfJB6LlA0pL0LOlhfeB06SOfUAOM6uRJzhLPyhHpBRPB0L6464Ju0lEOfUfnHUMRpK0HUMkMOl0",
+            ".note.youdao.com",
+            "/"
+        ],
+        [
+            "NTES_SESS",
+            "zM3cRC0MFetFOI5Hzg8UDU3zfDhFHz2RY93FcB.Ro4R5PyLllOWI.5TP7YJhrkl.ear1uk5eVMsNeQKC8dt30fzrf4v05B75QieZhb5t6S_ZFDQI8u4O7XvFZC4bZWaqGikZCKR8x1qYultGwodFH6NqPRPpq32z5QIfS67uf0LQQpg2tnxglnpBps3hI.AyA",
+            ".youdao.com",
+            "/"
+        ],
+        [
+            "S_INFO",
+            "1758170707|0|3&80##|h11128",
+            ".youdao.com",
+            "/"
+        ],
+        [
+            "P_INFO",
+            "h11128@163.com|1758170707|0|youdaonote|11&6|US&1758170287&youdaonote#US&null#10#0#0|&0|youdaonote|h11128@163.com",
+            ".youdao.com",
             "/"
         ]
     ]

@@ -12,3 +12,6 @@ dist
 *.spec
 wine
 xiaobai
+youdaonote/
+gui/__pycache__/
+gui/*.pyc
