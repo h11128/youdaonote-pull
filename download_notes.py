@@ -57,20 +57,21 @@ class YoudaoNoteDownloader:
     """
     有道云笔记下载工具
     """
-    
-    def __init__(self):
+
+    def __init__(self, cookies_path=None):
         self.youdaonote_api = None
         self.youdaonote_pull = None
-        
+        self.cookies_path = cookies_path
+
     def init_api(self):
         """初始化API"""
-        self.youdaonote_api = YoudaoNoteApi()
+        self.youdaonote_api = YoudaoNoteApi(cookies_path=self.cookies_path)
         error_msg = self.youdaonote_api.login_by_cookies()
         if error_msg:
             logging.error(f"Cookie登录失败: {error_msg}")
             return False
         logging.info("Cookie登录成功!")
-        
+
         # 初始化pull实例
         self.youdaonote_pull = YoudaoNotePull()
         return True

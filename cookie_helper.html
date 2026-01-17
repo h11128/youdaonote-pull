@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>有道云笔记 Cookie 提取助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .step {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        
+        .step-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        .step-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .step-content {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: bold;
+            margin: 10px 5px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .result {
+            background: #f8f9fa;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .result.show {
+            display: block;
+        }
+        
+        .result pre {
+            background: #2d3748;
+            color: #68d391;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        
+        .success {
+            color: #48bb78;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .error {
+            color: #f56565;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            color: #856404;
+        }
+        
+        .button-group {
+            text-align: center;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍪 有道云笔记 Cookie 提取助手</h1>
+        <p class="subtitle">快速提取并保存有道云笔记登录凭证</p>
+        
+        <div class="warning">
+            ⚠️ <strong>重要提示：</strong>请确保你已经在浏览器中登录了有道云笔记 (note.youdao.com)
+        </div>
+        
+        <div class="step">
+            <div class="step-title">
+                <span class="step-number">1</span>
+                打开有道云笔记页面
+            </div>
+            <div class="step-content">
+                在新标签页中打开 <a href="https://note.youdao.com" target="_blank">https://note.youdao.com</a> 并登录
+            </div>
+        </div>
+        
+        <div class="step">
+            <div class="step-title">
+                <span class="step-number">2</span>
+                打开浏览器开发者工具
+            </div>
+            <div class="step-content">
+                按 <kbd>F12</kbd> 键（或右键点击页面 → 检查），切换到 <strong>Console（控制台）</strong> 标签页
+            </div>
+        </div>
+        
+        <div class="step">
+            <div class="step-title">
+                <span class="step-number">3</span>
+                复制并运行提取脚本
+            </div>
+            <div class="step-content">
+                点击下面的按钮复制脚本，然后粘贴到控制台中按回车执行
+            </div>
+        </div>
+        
+        <div class="button-group">
+            <button onclick="copyScript()">📋 复制提取脚本</button>
+            <button onclick="window.open('https://note.youdao.com', '_blank')">🌐 打开有道云笔记</button>
+        </div>
+        
+        <div id="result" class="result">
+            <div class="success">✅ 脚本已复制到剪贴板！</div>
+            <p>现在请：</p>
+            <ol style="margin-left: 20px; margin-top: 10px; line-height: 1.8;">
+                <li>切换到有道云笔记页面</li>
+                <li>按 F12 打开开发者工具</li>
+                <li>切换到 Console（控制台）标签</li>
+                <li>粘贴脚本并按回车</li>
+                <li>脚本会自动提取并复制cookies</li>
+                <li>将复制的内容保存到项目根目录的 <code>cookies.json</code> 文件</li>
+            </ol>
+        </div>
+    </div>
+    
+    <script>
+        const extractScript = `(function() {
+    var cookies = document.cookie.split(';');
+    var cookieArray = [];
+    var requiredCookies = ['YNOTE_CSTK', 'YNOTE_SESS', 'YNOTE_LOGIN'];
+    
+    cookies.forEach(function(cookie) {
+        var parts = cookie.trim().split('=');
+        var name = parts[0];
+        var value = parts.slice(1).join('=');
+        
+        if (requiredCookies.includes(name)) {
+            cookieArray.push([name, value, '.note.youdao.com', '/']);
+        }
+    });
+    
+    var result = {"cookies": cookieArray};
+    
+    if (cookieArray.length === 3) {
+        console.log('✅ 成功提取所有必需的cookies！');
+        console.log('📋 已自动复制到剪贴板，请保存到 cookies.json 文件');
+        console.log('');
+        console.log(JSON.stringify(result, null, 2));
+        navigator.clipboard.writeText(JSON.stringify(result, null, 2));
+    } else {
+        console.log('❌ 提取失败，请确保已登录有道云笔记');
+        console.log('缺少的cookies:', requiredCookies.filter(c => !cookieArray.find(ca => ca[0] === c)));
+    }
+})();`;
+        
+        function copyScript() {
+            navigator.clipboard.writeText(extractScript).then(function() {
+                document.getElementById('result').classList.add('show');
+            }).catch(function(err) {
+                alert('复制失败，请手动复制脚本');
+            });
+        }
+    </script>
+</body>
+</html>
+

@@ -190,21 +190,21 @@ class YoudaoNoteGUI:
             cookies_path = os.path.join(base_dir, "cookies.json")
             self.youdaonote_api = YoudaoNoteApi(cookies_path=cookies_path)
             error_msg = self.youdaonote_api.login_by_cookies()
-            
+
             if error_msg:
                 messagebox.showerror("登录失败", f"Cookie登录失败: {error_msg}")
                 self.safe_set_status("登录失败")
                 return False
-            
-            # 初始化工具类
-            self.lister = YoudaoNoteLister()
-            self.downloader = YoudaoNoteDownloader()
+
+            # 初始化工具类，传递cookies_path
+            self.lister = YoudaoNoteLister(cookies_path=cookies_path)
+            self.downloader = YoudaoNoteDownloader(cookies_path=cookies_path)
             # 复用已登录的 API
             self.lister.youdaonote_api = self.youdaonote_api
             self.downloader.youdaonote_api = self.youdaonote_api
-            
+
             self.safe_set_status("登录成功")
-            
+
             # 加载根目录
             self.load_root_directory()
             return True
