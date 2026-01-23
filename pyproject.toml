@@ -1,0 +1,77 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "youdaonote-pull"
+version = "2.0.0"
+description = "有道云笔记导出工具 - 支持全量导出、搜索、GUI"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "DeppWang", email = ""},
+]
+keywords = ["youdao", "note", "export", "markdown", "云笔记"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Environment :: X11 Applications",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Utilities",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "requests>=2.20.0",
+    "markdownify>=0.5.0",
+    "Brotli>=1.0.0",
+]
+
+[project.optional-dependencies]
+# Windows 文件时间设置
+windows = ["win32-setctime>=1.0.0"]
+# 自动登录
+login = ["playwright>=1.40.0"]
+# 从浏览器提取 cookies
+browser = ["browser-cookie3>=0.19.0"]
+# 完整安装（推荐）
+full = [
+    "win32-setctime>=1.0.0; sys_platform == 'win32'",
+    "playwright>=1.40.0",
+    "browser-cookie3>=0.19.0",
+]
+# 开发依赖
+dev = [
+    "pytest>=7.0.0",
+    "pre-commit>=2.0.0",
+]
+
+[project.scripts]
+youdaonote = "youdaonote.__main__:main"
+youdaonote-pull = "youdaonote.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/DeppWang/youdaonote-pull"
+Repository = "https://github.com/DeppWang/youdaonote-pull"
+Issues = "https://github.com/DeppWang/youdaonote-pull/issues"
+
+[tool.setuptools]
+packages = ["youdaonote"]
+
+[tool.setuptools.package-data]
+youdaonote = ["*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
+python_files = ["test_*.py", "test.py"]
+
+[tool.black]
+line-length = 100
+target-version = ['py38', 'py39', 'py310', 'py311']

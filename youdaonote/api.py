@@ -3,7 +3,7 @@ import os
 
 import requests
 
-from core.common import get_script_directory
+from youdaonote.common import get_config_directory
 
 
 class YoudaoNoteApi(object):
@@ -43,7 +43,7 @@ class YoudaoNoteApi(object):
         self.cookies_path = (
             cookies_path
             if cookies_path
-            else os.path.join(get_script_directory(), "cookies.json")
+            else os.path.join(get_config_directory(), "cookies.json")
         )
         self.cstk = None
 

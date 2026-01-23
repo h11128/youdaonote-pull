@@ -10,4 +10,9 @@ def get_script_directory():
         return os.path.dirname(sys.executable)
     else:
         # 如果是普通脚本
-        return "."
+        return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def get_config_directory():
+    """获取配置文件目录"""
+    return os.path.join(get_script_directory(), "config")

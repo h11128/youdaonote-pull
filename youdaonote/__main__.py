@@ -1,0 +1,432 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+有道云笔记命令行工具
+统一的 CLI 入口
+"""
+
+import argparse
+import logging
+import os
+import sys
+import time
+import traceback
+from typing import List, Dict
+
+import requests
+
+from youdaonote import log
+from youdaonote.api import YoudaoNoteApi
+from youdaonote.search import YoudaoNoteSearch
+from youdaonote.download import YoudaoNoteDownload, load_config
+from youdaonote.cookies import CookieManager
+
+
+class YoudaoNoteCLI:
+    """有道云笔记命令行工具"""
+
+    def __init__(self, cookies_path=None):
+        self.youdaonote_api = None
+        self.search_engine = None
+        self.download_engine = None
+        self.cookies_path = cookies_path or CookieManager.get_default_path()
+
+    def init_api(self):
+        """初始化 API"""
+        self.youdaonote_api = YoudaoNoteApi(cookies_path=self.cookies_path)
+        error_msg = self.youdaonote_api.login_by_cookies()
+        if error_msg:
+            logging.error(f"Cookie 登录失败: {error_msg}")
+            return False
+        logging.info("登录成功!")
+        
+        self.search_engine = YoudaoNoteSearch(self.youdaonote_api)
+        self.download_engine = YoudaoNoteDownload(self.youdaonote_api)
+        return True
+
+    def list_directory(self, path: str = None, max_depth: int = 2):
+        """列出目录内容"""
+        if not self.search_engine and not self.init_api():
+            return
+        
+        if path:
+            folder_id = self.search_engine.find_folder_by_path(path)
+            if not folder_id:
+                print(f"❌ 未找到路径: {path}")
+                return
+            print(f"📁 目录内容 ({path}):")
+        else:
+            folder_id = None
+            print("📁 根目录内容:")
+        
+        self._print_directory(folder_id, "", max_depth, 0)
+    
+    def _print_directory(self, dir_id: str, current_path: str, 
+                         max_depth: int, current_depth: int):
+        """递归打印目录"""
+        if current_depth >= max_depth:
+            return
+        
+        try:
+            entries = self.search_engine.get_directory_entries(dir_id)
+            folders = [e for e in entries if e['is_dir']]
+            files = [e for e in entries if not e['is_dir']]
+            
+            indent = "  " * current_depth
+            
+            for folder in folders:
+                print(f"{indent}📁 {folder['name']}")
+                if current_depth < max_depth - 1:
+                    self._print_directory(
+                        folder['id'], 
+                        f"{current_path}/{folder['name']}", 
+                        max_depth, 
+                        current_depth + 1
+                    )
+            
+            for file in files:
+                size = file.get('size', 0)
+                if size > 1024 * 1024:
+                    size_str = f"{size / (1024 * 1024):.1f}MB"
+                elif size > 1024:
+                    size_str = f"{size / 1024:.1f}KB"
+                else:
+                    size_str = f"{size}B"
+                print(f"{indent}📄 {file['name']} ({size_str})")
+                
+        except Exception as e:
+            logging.error(f"列出目录时出错: {e}")
+
+    def search(self, name: str, search_type: str = "all", exact_match: bool = False):
+        """搜索文件或文件夹"""
+        if not self.search_engine and not self.init_api():
+            return []
+
+        print(f"🔍 搜索 '{name}' ...")
+        results = self.search_engine.search_by_name(name, search_type, exact_match)
+
+        if not results:
+            print("❌ 未找到匹配的项目")
+            return []
+
+        print(f"✅ 找到 {len(results)} 个匹配项:")
+        for i, item in enumerate(results, 1):
+            icon = "📁" if item['is_dir'] else "📄"
+            print(f"  {i}. {icon} {item['path']}")
+        
+        return results
+
+    def download(self, name: str, search_type: str = "all", 
+                 exact_match: bool = False, local_dir: str = "./youdaonote"):
+        """搜索并下载"""
+        if not self.search_engine and not self.init_api():
+            return False
+        
+        results = self.search_engine.search_by_name(name, search_type, exact_match)
+        
+        if not results:
+            print("❌ 未找到匹配的项目")
+            return False
+        
+        print(f"✅ 找到 {len(results)} 个匹配项:")
+        for i, item in enumerate(results, 1):
+            icon = "📁" if item['is_dir'] else "📄"
+            print(f"  {i}. {icon} {item['path']}")
+        
+        if len(results) > 1:
+            print(f"\n请选择要下载的项目 (1-{len(results)}, 0=全部):")
+            try:
+                choice = input("> ").strip()
+                if choice == "0":
+                    selected = results
+                else:
+                    idx = int(choice) - 1
+                    if 0 <= idx < len(results):
+                        selected = [results[idx]]
+                    else:
+                        print("❌ 无效选择")
+                        return False
+            except (ValueError, KeyboardInterrupt):
+                print("\n❌ 取消下载")
+                return False
+        else:
+            selected = results
+        
+        os.makedirs(local_dir, exist_ok=True)
+        
+        success = 0
+        for item in selected:
+            if self.download_engine.download_by_search_result(item, local_dir):
+                success += 1
+        
+        print(f"🎉 下载完成! 成功: {success}/{len(selected)}")
+        return success > 0
+
+    def pull(self, local_dir: str = None, ydnote_dir: str = None):
+        """全量导出所有笔记"""
+        config, error = load_config()
+        if error:
+            print(f"⚠️ {error}")
+        
+        if not local_dir:
+            local_dir = config.get("local_dir") or "./youdaonote"
+        if not ydnote_dir:
+            ydnote_dir = config.get("ydnote_dir") or ""
+        
+        smms_token = config.get("smms_secret_token", "")
+        is_relative = config.get("is_relative_path", True)
+        
+        if not self.init_api():
+            return False
+        
+        self.download_engine = YoudaoNoteDownload(
+            self.youdaonote_api, smms_token, is_relative
+        )
+        
+        print(f"📥 开始全量导出...")
+        print(f"   本地目录: {local_dir}")
+        if ydnote_dir:
+            print(f"   指定目录: {ydnote_dir}")
+        
+        start_time = time.time()
+        success = self.download_engine.pull_all(local_dir, ydnote_dir)
+        elapsed = time.time() - start_time
+        
+        if success:
+            print(f"🎉 导出完成! 耗时 {elapsed:.1f} 秒")
+        else:
+            print("❌ 导出失败")
+        
+        return success
+
+
+def cmd_pull(args):
+    """执行 pull 命令"""
+    cli = YoudaoNoteCLI()
+    cli.pull(args.dir, args.ydnote_dir)
+
+
+def cmd_list(args):
+    """执行 list 命令"""
+    cli = YoudaoNoteCLI()
+    cli.list_directory(args.path, args.depth)
+
+
+def cmd_search(args):
+    """执行 search 命令"""
+    cli = YoudaoNoteCLI()
+    cli.search(args.keyword, args.type, args.exact)
+
+
+def cmd_download(args):
+    """执行 download 命令"""
+    cli = YoudaoNoteCLI()
+    cli.download(args.keyword, args.type, args.exact, args.dir)
+
+
+def cmd_login(args):
+    """执行 login 命令 - 使用 Playwright 登录"""
+    print("\n" + "=" * 60)
+    print("  有道云笔记登录")
+    print("=" * 60 + "\n")
+    
+    # 检查 Playwright
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        print("❌ 未安装 Playwright，请执行以下命令安装：")
+        print("\n  pip install playwright")
+        print("  playwright install chromium")
+        print()
+        return 1
+    
+    print("🚀 正在启动浏览器...")
+    print("📌 请在弹出的浏览器窗口中完成登录")
+    print("📌 支持：扫码登录 / 账号密码登录")
+    print("📌 登录成功后，程序会自动检测并保存 Cookies\n")
+    
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=False, args=['--start-maximized'])
+        context = browser.new_context(
+            viewport={'width': 1280, 'height': 800},
+            locale='zh-CN'
+        )
+        
+        page = context.new_page()
+        print("🌐 正在打开有道云笔记...")
+        page.goto("https://note.youdao.com/web/")
+        
+        print("\n⏳ 等待登录完成...")
+        print("   （登录成功后会自动继续，最长等待 5 分钟）\n")
+        
+        try:
+            max_wait_time = 300
+            check_interval = 2
+            waited = 0
+            
+            while waited < max_wait_time:
+                cookies = context.cookies()
+                cookie_names = [c['name'] for c in cookies]
+                
+                if all(name in cookie_names for name in CookieManager.REQUIRED_COOKIES):
+                    print("🎉 检测到登录成功！")
+                    break
+                
+                page.wait_for_timeout(check_interval * 1000)
+                waited += check_interval
+                
+                if waited % 10 == 0:
+                    print(f"   已等待 {waited} 秒...")
+            
+            if waited >= max_wait_time:
+                print("❌ 等待超时，请重试")
+                browser.close()
+                return 1
+            
+            page.wait_for_timeout(2000)
+            
+            print("\n🔍 正在提取 Cookies...")
+            cookies = context.cookies()
+            
+            cookies_data, error = CookieManager.convert_playwright_cookies(cookies)
+            
+            if error:
+                print(f"\n❌ 转换 cookies 失败: {error}")
+                browser.close()
+                return 1
+            
+            success, error = CookieManager.save(cookies_data)
+            
+            if success:
+                print(f"\n✅ Cookies 已保存到: {CookieManager.get_default_path()}")
+                print("\n" + "=" * 60)
+                print("🎉 登录成功！现在可以使用以下命令：")
+                print("=" * 60)
+                print("\n  python -m youdaonote pull      # 全量导出")
+                print("  python -m youdaonote gui       # 图形界面")
+                print("  python -m youdaonote search XX # 搜索笔记")
+                print()
+                browser.close()
+                return 0
+            else:
+                print(f"\n❌ 保存失败: {error}")
+                browser.close()
+                return 1
+                
+        except Exception as e:
+            print(f"\n❌ 发生错误: {e}")
+            browser.close()
+            return 1
+
+
+def cmd_gui(args):
+    """执行 gui 命令 - 启动图形界面"""
+    print("🚀 正在启动有道云笔记 GUI...")
+    
+    # 检查 cookies 文件
+    cookies_path = CookieManager.get_default_path()
+    if not os.path.exists(cookies_path):
+        print(f"❌ 未找到 cookies 文件: {cookies_path}")
+        print("请先运行: python -m youdaonote login")
+        return 1
+    
+    try:
+        from youdaonote.gui import run_gui
+        run_gui()
+        return 0
+    except ImportError as e:
+        print(f"❌ 导入 GUI 模块失败: {e}")
+        print("请确保已安装 tkinter")
+        return 1
+    except Exception as e:
+        print(f"❌ 启动 GUI 失败: {e}")
+        return 1
+
+
+def main():
+    """主函数"""
+    parser = argparse.ArgumentParser(
+        prog='youdaonote',
+        description='有道云笔记导出工具',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog='''
+示例:
+  %(prog)s login                        # 登录（推荐首次使用）
+  %(prog)s pull                         # 全量导出
+  %(prog)s pull --dir ./backup          # 导出到指定目录
+  %(prog)s gui                          # 启动图形界面
+  %(prog)s list                         # 列出目录
+  %(prog)s search 笔记                   # 搜索
+  %(prog)s download 关键词               # 搜索并下载
+'''
+    )
+    
+    subparsers = parser.add_subparsers(dest='command', help='可用命令')
+    
+    # login 命令
+    parser_login = subparsers.add_parser('login', help='登录有道云笔记（使用浏览器）')
+    parser_login.set_defaults(func=cmd_login)
+    
+    # gui 命令
+    parser_gui = subparsers.add_parser('gui', help='启动图形界面')
+    parser_gui.set_defaults(func=cmd_gui)
+    
+    # pull 命令
+    parser_pull = subparsers.add_parser('pull', help='全量导出所有笔记')
+    parser_pull.add_argument('--dir', '-d', default=None, help='导出目录（默认: ./youdaonote）')
+    parser_pull.add_argument('--ydnote-dir', '-y', default=None, help='只导出有道云中的指定目录')
+    parser_pull.set_defaults(func=cmd_pull)
+    
+    # list 命令
+    parser_list = subparsers.add_parser('list', help='列出目录内容')
+    parser_list.add_argument('path', nargs='?', default=None, help='目录路径')
+    parser_list.add_argument('--depth', '-n', type=int, default=2, help='显示深度（默认: 2）')
+    parser_list.set_defaults(func=cmd_list)
+    
+    # search 命令
+    parser_search = subparsers.add_parser('search', help='搜索文件或文件夹')
+    parser_search.add_argument('keyword', help='搜索关键词')
+    parser_search.add_argument('--type', '-t', choices=['all', 'folder', 'file'], 
+                               default='all', help='搜索类型')
+    parser_search.add_argument('--exact', '-e', action='store_true', help='精确匹配')
+    parser_search.set_defaults(func=cmd_search)
+    
+    # download 命令
+    parser_download = subparsers.add_parser('download', help='搜索并下载')
+    parser_download.add_argument('keyword', help='搜索关键词')
+    parser_download.add_argument('--type', '-t', choices=['all', 'folder', 'file'], 
+                                  default='all', help='搜索类型')
+    parser_download.add_argument('--exact', '-e', action='store_true', help='精确匹配')
+    parser_download.add_argument('--dir', '-d', default='./youdaonote', help='下载目录')
+    parser_download.set_defaults(func=cmd_download)
+    
+    args = parser.parse_args()
+    
+    if args.command is None:
+        parser.print_help()
+        return 1
+    
+    # 初始化日志
+    log.init_logging()
+    
+    try:
+        return args.func(args) or 0
+    except requests.exceptions.ProxyError:
+        print("❌ 网络代理错误，请检查代理设置")
+        traceback.print_exc()
+        return 1
+    except requests.exceptions.ConnectionError:
+        print("❌ 网络连接错误，请检查网络")
+        traceback.print_exc()
+        return 1
+    except KeyboardInterrupt:
+        print("\n⚠️ 用户取消操作")
+        return 0
+    except Exception as e:
+        print(f"❌ 发生错误: {e}")
+        traceback.print_exc()
+        return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

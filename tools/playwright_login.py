@@ -1,0 +1,34 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+使用 Playwright 自动化登录有道云笔记并提取 Cookies
+
+此脚本已整合到主程序，推荐使用：
+    python -m youdaonote login
+"""
+
+import os
+import sys
+
+# 添加父目录到路径
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+
+def main():
+    """主函数 - 调用统一的登录命令"""
+    print("=" * 60)
+    print("  提示: 此脚本已整合到主程序")
+    print("  推荐使用: python -m youdaonote login")
+    print("=" * 60 + "\n")
+    
+    # 直接调用主程序的登录命令
+    from youdaonote.__main__ import cmd_login
+    
+    class Args:
+        pass
+    
+    return cmd_login(Args())
+
+
+if __name__ == "__main__":
+    sys.exit(main())

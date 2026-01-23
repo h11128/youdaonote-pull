@@ -1,17 +1,38 @@
+# IDE
 .idea/
+.vscode/
 *.iml
-cookies.json
-.python-version
 .history
-__pycache__
-test-pull
-logs
-.vscode
-build
-dist
-*.spec
-wine
-xiaobai
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+.venv/
+.python-version
+*.egg-info/
+.eggs/
+
+# 项目特定
+config/cookies.json
+logs/
+backups/
+*.backup.*
+test-pull/
+
+# 导出目录（用户生成）
 youdaonote/
-gui/__pycache__/
-gui/*.pyc
+youdaonote-export/
+
+# 构建产物
+build/
+dist/
+*.spec
+*.egg
+
+# 测试
+.pytest_cache/
+.coverage
+htmlcov/
