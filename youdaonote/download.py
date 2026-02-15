@@ -86,8 +86,20 @@ class YoudaoNoteDownload:
             youdao_file_suffix = os.path.splitext(file_name)[1]
             original_file_path = os.path.join(local_dir, file_name).replace("\\", "/")
 
-            # 判断文件类型
-            file_type = self._judge_file_type(file_id, youdao_file_suffix)
+            # 对于可能转换的文件类型（.note/.clip/无后缀），最终路径是 .md
+            # 先用 .md 路径做 SKIP 预判，避免不必要的下载
+            if convert_to_md and youdao_file_suffix in [".note", ".clip", ""]:
+                candidate_md_path = os.path.join(
+                    local_dir,
+                    os.path.splitext(file_name)[0] + MARKDOWN_SUFFIX
+                ).replace("\\", "/")
+                pre_action = self._get_file_action(candidate_md_path, modify_time / 1000 if modify_time else 0)
+                if pre_action == FileAction.SKIP:
+                    logging.debug(f"跳过文件: {candidate_md_path}")
+                    return True
+
+            # 一次性下载文件内容并判断类型（避免重复下载）
+            file_type, content = self._download_and_detect(file_id, youdao_file_suffix)
 
             # 确定本地文件路径
             if file_type != FileType.OTHER and convert_to_md:
@@ -110,9 +122,9 @@ class YoudaoNoteDownload:
                 if os.path.exists(local_file_path):
                     os.remove(local_file_path)
 
-            # 下载文件
-            self._download_and_convert(file_id, original_file_path, local_file_path, 
-                                       file_type, youdao_file_suffix, convert_to_md)
+            # 保存并转换文件（使用已下载的 content，不再重复请求）
+            self._save_and_convert(file_id, content, original_file_path, local_file_path,
+                                   file_type, youdao_file_suffix, convert_to_md)
 
             # 设置文件时间
             self._set_file_time(local_file_path, create_time / 1000 if create_time else 0,
@@ -196,26 +208,30 @@ class YoudaoNoteDownload:
         name = self._del_regex_symbol.sub("", name)
         return name
 
-    def _judge_file_type(self, file_id: str, youdao_file_suffix: str) -> FileType:
+    def _download_and_detect(self, file_id: str, youdao_file_suffix: str) -> Tuple[FileType, Optional[bytes]]:
         """
-        判断文件类型
+        一次性下载文件内容并判断类型，避免重复下载。
+        对于 .md 和其他已知类型，不需要提前下载内容来判断类型。
+        对于 .note/.clip/无后缀文件，需要看内容前几个字节。
+        
         :param file_id: 文件 ID
         :param youdao_file_suffix: 文件后缀
-        :return: 文件类型
+        :return: (文件类型, 文件二进制内容)  如果不需要下载内容则 content 为 None
         """
         if youdao_file_suffix == MARKDOWN_SUFFIX:
-            return FileType.MARKDOWN
+            return FileType.MARKDOWN, None
         
         if youdao_file_suffix in [".note", ".clip", ""]:
             response = self.api.get_file_by_id(file_id)
             content = response.content
             
             if content[:5] == b"<?xml":
-                return FileType.XML
+                return FileType.XML, content
             elif content.startswith(b'{"'):
-                return FileType.JSON
+                return FileType.JSON, content
+            return FileType.OTHER, content
         
-        return FileType.OTHER
+        return FileType.OTHER, None
 
     def _get_file_action(self, local_file_path: str, modify_time: float) -> FileAction:
         """
@@ -233,22 +249,30 @@ class YoudaoNoteDownload:
 
         return FileAction.UPDATE
 
-    def _download_and_convert(self, file_id: str, original_file_path: str,
-                              local_file_path: str, file_type: FileType,
-                              youdao_file_suffix: str, convert_to_md: bool):
+    def _save_and_convert(self, file_id: str, content: Optional[bytes],
+                          original_file_path: str, local_file_path: str,
+                          file_type: FileType, youdao_file_suffix: str,
+                          convert_to_md: bool):
         """
-        下载并转换文件
-        :param file_id: 文件 ID
+        保存已下载的内容并转换文件格式。
+        如果 content 为 None（如 .md 文件在 _download_and_detect 中未提前下载），
+        则在此处下载。
+        
+        :param file_id: 文件 ID（content 为 None 时用于下载）
+        :param content: 已下载的文件二进制内容（可能为 None）
         :param original_file_path: 原始文件路径
         :param local_file_path: 本地文件路径
         :param file_type: 文件类型
         :param youdao_file_suffix: 原始后缀
         :param convert_to_md: 是否转换为 Markdown
         """
-        # 下载文件
-        response = self.api.get_file_by_id(file_id)
+        # 如果 content 为 None，说明 _download_and_detect 阶段没有下载（如 .md 文件）
+        if content is None:
+            response = self.api.get_file_by_id(file_id)
+            content = response.content
+
         with open(original_file_path, "wb") as f:
-            f.write(response.content)
+            f.write(content)
 
         # 转换为 Markdown
         if convert_to_md:

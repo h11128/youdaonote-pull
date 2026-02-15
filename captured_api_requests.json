@@ -1,0 +1,763 @@
+[
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/mapi/payment?method=status&pversion=v2&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=22&_firstTime=2026%2F02%2F14%2000%3A47%3A16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=undefined",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/json"
+    },
+    "post_data": "{}"
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/mapi/payment?method=status&pversion=v2&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=22&_firstTime=2026%2F02%2F14%2000%3A47%3A16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=undefined",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/json"
+    },
+    "post_data": "{}"
+  },
+  {
+    "method": "GET",
+    "url": "https://note.youdao.com/yws/mapi/user?method=get&vendor=&multilevelEnable=true&keyfrom=web&product=YNote-Web&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=24&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&cstk=undefined",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "accept-language": "zh-CN",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://note.youdao.com/yws/api/self?method=get&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=25&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=undefined",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "text/plain"
+    },
+    "post_data": null
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/mapi/payment?method=status&pversion=v2&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=27&_firstTime=2026%2F02%2F14%2000%3A47%3A16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=undefined",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/json"
+    },
+    "post_data": "{}"
+  },
+  {
+    "method": "GET",
+    "url": "https://note.youdao.com/yws/mapi/payment?method=getPaidStatus&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=28&_firstTime=2026%2F02%2F14%2000%3A47%3A16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=undefined",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "accept-language": "zh-CN",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/file?method=getByPath&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=29&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "path=%2F&entire=true&purge=false&cstk=QapKTnDv"
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/file?method=listEntireByParentPath&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=30&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "path=%2F&dirOnly=true&f=true&cstk=QapKTnDv"
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/mapi/tag?_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=32&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "method=get&cstk=QapKTnDv"
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/sync/blepenbook?method=pull&baseVersion=0&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=33&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "cstk=QapKTnDv"
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/mapi/lead?method=getLeadType&from=web&cstk=QapKTnDv&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=34&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "cstk=QapKTnDv"
+  },
+  {
+    "method": "GET",
+    "url": "https://note.youdao.com/yws/api/personal/user?method=status&cstk=QapKTnDv&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=36&_firstTime=2026%2F02%2F14%2000%3A47%3A16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "text/plain"
+    },
+    "post_data": null
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/org?method=isVOUser&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=39&_firstTime=2026%2F02%2F14%2000%3A47%3A16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "cstk=QapKTnDv"
+  },
+  {
+    "method": "GET",
+    "url": "https://note.youdao.com/yws/api/sticky/list?fileId=0&opType=1&offset=1&limit=30&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=42&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "text/plain"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://note.youdao.com/yws/api/image/normal/1712721925107?userId=h11128%40163.com",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "accept-language": "zh-CN",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://note.youdao.com/yws/api/personal/notebackground?method=listBgImage&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=43&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "text/plain"
+    },
+    "post_data": null
+  },
+  {
+    "method": "GET",
+    "url": "https://note.youdao.com/yws/mapi/message?method=mobile&last=0&imei=Web.windows.Netscape&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=44&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "text/plain"
+    },
+    "post_data": null
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/file?method=listRecent&offset=0&limit=30&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=45&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "cstk=QapKTnDv"
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/file/WEB8a4ab6d613baf969543dbceb54ccf692?method=getById&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=46&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "fileId=WEB8a4ab6d613baf969543dbceb54ccf692&entire=true&purge=false&cstk=QapKTnDv"
+  },
+  {
+    "method": "GET",
+    "url": "https://note.youdao.com/yws/api/personal/share/qp?fileId=WEB8a4ab6d613baf969543dbceb54ccf692&myShare=false&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=47&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "text/plain"
+    },
+    "post_data": null
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/sync?method=download&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=48&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "fileId=WEB8a4ab6d613baf969543dbceb54ccf692&version=-1&convert=true&editorVersion=1692072965000&editorType=1&cstk=QapKTnDv"
+  },
+  {
+    "method": "GET",
+    "url": "https://note.youdao.com/yws/api/self?method=get&cstk=QapKTnDv&keyfrom=web",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "x-requested-with": "XMLHttpRequest",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "*/*"
+    },
+    "post_data": null
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/sync?method=push&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=52&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "fileId=WEB1802560508b3cc057ffce159594cc0e6&parentId=47829F6BDA794CA1AC4114388FE9F7D2&name=%E6%97%A0%E6%A0%87%E9%A2%98%E7%AC%94%E8%AE%B0.note&domain=0&rootVersion=-1&sessionId=&dir=false&createTime=1771104177&modifyTime=1771104177&bodyString=%7B%222%22%3A%221%22%2C%223%22%3A%22Ju9C-1621846617594%22%2C%224%22%3A%7B%22fv%22%3A%220%22%7D%2C%225%22%3A%5B%7B%223%22%3A%223060-1621846615933%22%2C%225%22%3A%5B%7B%222%22%3A%222%22%2C%223%22%3A%22p5PQ-1621846617594%22%7D%5D%7D%5D%2C%22__compress__%22%3Atrue%7D&transactionId=WEB1802560508b3cc057ffce159594cc0e6&transactionTime=1771104177&entryProps=%7B%22ev%22%3A%22j1%22%7D&editorVersion=1714445486000&orgEditorType=1&req_from=create&cstk=QapKTnDv"
+  },
+  {
+    "method": "GET",
+    "url": "https://note.youdao.com/yws/api/personal/share/qp?fileId=WEB1802560508b3cc057ffce159594cc0e6&myShare=false&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=53&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "text/plain"
+    },
+    "post_data": null
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/file/WEB1802560508b3cc057ffce159594cc0e6?method=getById&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=54&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "fileId=WEB1802560508b3cc057ffce159594cc0e6&entire=true&purge=false&cstk=QapKTnDv"
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/sync?method=download&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=55&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "fileId=WEB1802560508b3cc057ffce159594cc0e6&version=-1&convert=true&editorVersion=1714445486000&editorType=1&cstk=QapKTnDv"
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/sync?method=push&name=%E6%B5%8B%E8%AF%95.note&fileId=WEB1802560508b3cc057ffce159594cc0e6&domain=0&rootVersion=-1&sessionId=&modifyTime=1771104182&transactionId=WEB1802560508b3cc057ffce159594cc0e6&transactionTime=1771104182&editorVersion=1714445486000&tags=&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=56&_firstTime=2026%2F02%2F14%2000%3A47%3A16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "cstk=QapKTnDv"
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/log?method=web&cstk=QapKTnDv&keyfrom=web&user_id=h11128@163.com&Browser=Chrome143.0.0.0&os=Windows10&subCategory=ydoc&attr=%5B%7B%22LogAction%22%3A%22edit-undefined%22%7D%5D",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "x-requested-with": "XMLHttpRequest",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "*/*"
+    },
+    "post_data": null
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/sync?method=push&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=57&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "fileId=WEB1802560508b3cc057ffce159594cc0e6&parentId=47829F6BDA794CA1AC4114388FE9F7D2&domain=0&rootVersion=-1&sessionId=&modifyTime=1771104187&bodyString=%7B%222%22%3A%221%22%2C%223%22%3A%22Ju9C-1621846617594%22%2C%224%22%3A%7B%22version%22%3A1%2C%22incompatibleVersion%22%3A0%2C%22fv%22%3A%220%22%7D%2C%225%22%3A%5B%7B%223%22%3A%223060-1621846615933%22%2C%225%22%3A%5B%7B%222%22%3A%222%22%2C%223%22%3A%22p5PQ-1621846617594%22%2C%227%22%3A%5B%7B%228%22%3A%22%E9%98%BF%E6%96%AF%E8%92%82%E8%8A%AC%E6%92%92%E6%97%A6%E6%B3%95%22%7D%5D%7D%5D%7D%2C%7B%223%22%3A%22Eum6-1771104184586%22%2C%225%22%3A%5B%7B%222%22%3A%222%22%2C%223%22%3A%222M9X-1771104184584%22%7D%5D%7D%5D%2C%22title%22%3A%22%22%2C%22__compress__%22%3Atrue%7D&transactionId=WEB1802560508b3cc057ffce159594cc0e6&transactionTime=1771104187&orgEditorType=1&summary=%E9%98%BF%E6%96%AF%E8%92%82%E8%8A%AC%E6%92%92%E6%97%A6%E6%B3%95&editorVersion=1714445486000&tags=&req_from=save&cstk=QapKTnDv"
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/mapi/payment?method=status&pversion=v2&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=59&_firstTime=2026%2F02%2F14%2000%3A47%3A16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/json"
+    },
+    "post_data": "{\"cstk\":\"QapKTnDv\"}"
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/mapi/tag?_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=60&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "method=get&cstk=QapKTnDv"
+  },
+  {
+    "method": "GET",
+    "url": "https://note.youdao.com/yws/api/sticky/list?fileId=0&opType=1&offset=1&limit=30&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=61&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "text/plain"
+    },
+    "post_data": null
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/file/WEB1802560508b3cc057ffce159594cc0e6?method=getById&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=62&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "fileId=WEB1802560508b3cc057ffce159594cc0e6&entire=true&purge=false&cstk=QapKTnDv"
+  },
+  {
+    "method": "GET",
+    "url": "https://note.youdao.com/yws/api/personal/share/qp?fileId=WEB1802560508b3cc057ffce159594cc0e6&myShare=false&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=64&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "text/plain"
+    },
+    "post_data": null
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/file/WEB1802560508b3cc057ffce159594cc0e6?method=getById&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=65&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "fileId=WEB1802560508b3cc057ffce159594cc0e6&entire=true&purge=false&cstk=QapKTnDv"
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/file?method=listRecent&offset=0&limit=30&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=66&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "cstk=QapKTnDv"
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/file/WEB1802560508b3cc057ffce159594cc0e6?method=getById&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=68&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "fileId=WEB1802560508b3cc057ffce159594cc0e6&entire=true&purge=false&cstk=QapKTnDv"
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/sync?method=push&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=69&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "fileId=WEBa536eb793239199899462d614ae91c7e&parentId=47829F6BDA794CA1AC4114388FE9F7D2&name=%E6%97%A0%E6%A0%87%E9%A2%98Markdown.md&domain=1&rootVersion=-1&sessionId=&dir=false&createTime=1771104195&modifyTime=1771104195&bodyString=&transactionId=WEBa536eb793239199899462d614ae91c7e&transactionTime=1771104195&cstk=QapKTnDv"
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/log?method=web&cstk=QapKTnDv&keyfrom=web&user_id=h11128@163.com&Browser=Chrome143.0.0.0&os=Windows10&subCategory=ydoc&attr=%5B%7B%22LogAction%22%3A%22CreateMarkdown%22%7D%5D",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "x-requested-with": "XMLHttpRequest",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "*/*"
+    },
+    "post_data": null
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/file/WEBa536eb793239199899462d614ae91c7e?method=getById&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=70&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "fileId=WEBa536eb793239199899462d614ae91c7e&entire=true&purge=false&cstk=QapKTnDv"
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/log?method=web&cstk=QapKTnDv&keyfrom=web&user_id=h11128@163.com&Browser=Chrome143.0.0.0&os=Windows10&subCategory=ydoc&attr=%5B%7B%22LogAction%22%3A%22ShowMarkdownView%22%7D%5D",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "x-requested-with": "XMLHttpRequest",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "*/*"
+    },
+    "post_data": null
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/sync?method=download&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=71&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "fileId=WEBa536eb793239199899462d614ae91c7e&version=-1&read=true&cstk=QapKTnDv"
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/sync?method=push&name=%E9%98%BF%E6%96%AF%E9%A1%BF%E5%8F%91%E6%96%AF%E8%92%82%E8%8A%AC.md&fileId=WEBa536eb793239199899462d614ae91c7e&domain=1&rootVersion=-1&sessionId=&modifyTime=1771104198&transactionId=WEBa536eb793239199899462d614ae91c7e&transactionTime=1771104198&editorVersion=1714445486000&tags=&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=72&_firstTime=2026%2F02%2F14%2000%3A47%3A16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "cstk=QapKTnDv"
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/sync?method=push&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=73&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "fileId=WEBa536eb793239199899462d614ae91c7e&parentId=47829F6BDA794CA1AC4114388FE9F7D2&domain=1&rootVersion=-1&sessionId=&modifyTime=1771104199&bodyString=%E9%98%BF%E8%BF%AA%E6%96%AF%E5%8F%91%E6%96%AF%E8%92%82%E8%8A%AC%0A&transactionId=WEBa536eb793239199899462d614ae91c7e&transactionTime=1771104199&tags=&resources=%3B&cstk=QapKTnDv"
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/mapi/payment?method=status&pversion=v2&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=75&_firstTime=2026%2F02%2F14%2000%3A47%3A16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/json"
+    },
+    "post_data": "{\"cstk\":\"QapKTnDv\"}"
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/mapi/tag?_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=76&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "method=get&cstk=QapKTnDv"
+  },
+  {
+    "method": "GET",
+    "url": "https://note.youdao.com/yws/api/sticky/list?fileId=0&opType=1&offset=1&limit=30&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=77&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "text/plain"
+    },
+    "post_data": null
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/file/WEBa536eb793239199899462d614ae91c7e?method=getById&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=78&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "fileId=WEBa536eb793239199899462d614ae91c7e&entire=true&purge=false&cstk=QapKTnDv"
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/file/WEBa536eb793239199899462d614ae91c7e?method=getById&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=79&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "fileId=WEBa536eb793239199899462d614ae91c7e&entire=true&purge=false&cstk=QapKTnDv"
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/file?method=listRecent&offset=0&limit=30&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=81&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "cstk=QapKTnDv"
+  },
+  {
+    "method": "POST",
+    "url": "https://note.youdao.com/yws/api/personal/file/WEBa536eb793239199899462d614ae91c7e?method=getById&_system=windows&_systemVersion=&_screenWidth=1400&_screenHeight=900&_appName=ynote&_appuser=2a432cca707eed888b67c7b024e352d1&_vendor=official-website&_launch=82&_firstTime=2026/02/14%2000:47:16&_deviceId=2a432cca707eed88&_platform=web&_cityCode=&_cityName=&_product=YNote-Web&_version=&sev=j1&sec=v1&keyfrom=web&cstk=QapKTnDv",
+    "headers": {
+      "sec-ch-ua-platform": "\"Windows\"",
+      "referer": "https://note.youdao.com/web/",
+      "accept-language": "zh-CN",
+      "sec-ch-ua": "\"Chromium\";v=\"143\", \"Not A(Brand\";v=\"24\"",
+      "sec-ch-ua-mobile": "?0",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    "post_data": "fileId=WEBa536eb793239199899462d614ae91c7e&entire=true&purge=false&cstk=QapKTnDv"
+  }
+]

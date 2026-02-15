@@ -31,15 +31,35 @@ class YoudaoNoteCLI:
         self.download_engine = None
         self.cookies_path = cookies_path or CookieManager.get_default_path()
 
-    def init_api(self):
-        """初始化 API"""
+    def init_api(self, auto_refresh: bool = True):
+        """
+        初始化 API
+        
+        :param auto_refresh: 如果 cookie 失效，是否自动尝试刷新
+        """
         self.youdaonote_api = YoudaoNoteApi(cookies_path=self.cookies_path)
         error_msg = self.youdaonote_api.login_by_cookies()
-        if error_msg:
-            logging.error(f"Cookie 登录失败: {error_msg}")
-            return False
-        logging.info("登录成功!")
         
+        if error_msg:
+            logging.warning(f"Cookie 登录失败: {error_msg}")
+            
+            # 尝试自动刷新 cookies
+            if auto_refresh and _refresh_cookies_if_needed(headless=True):
+                # 刷新成功，重新尝试登录
+                self.youdaonote_api = YoudaoNoteApi(cookies_path=self.cookies_path)
+                error_msg = self.youdaonote_api.login_by_cookies()
+                if not error_msg:
+                    logging.info("登录成功（自动刷新后）!")
+                    self.search_engine = YoudaoNoteSearch(self.youdaonote_api)
+                    self.download_engine = YoudaoNoteDownload(self.youdaonote_api)
+                    return True
+            
+            # 自动刷新失败，提示用户手动登录
+            print("❌ Cookie 已过期，请运行以下命令重新登录：")
+            print("   python -m youdaonote login")
+            return False
+        
+        logging.info("登录成功!")
         self.search_engine = YoudaoNoteSearch(self.youdaonote_api)
         self.download_engine = YoudaoNoteDownload(self.youdaonote_api)
         return True
@@ -224,8 +244,75 @@ def cmd_download(args):
     cli.download(args.keyword, args.type, args.exact, args.dir)
 
 
+def _get_browser_data_dir() -> str:
+    """获取浏览器数据目录（用于持久化登录状态）"""
+    from youdaonote.common import get_config_directory
+    return os.path.join(get_config_directory(), "browser_data")
+
+
+def _refresh_cookies_if_needed(headless: bool = True) -> bool:
+    """
+    使用 persistent context 尝试刷新 cookies
+    
+    :param headless: 是否使用无头模式（后台刷新）
+    :return: 是否成功刷新
+    """
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        return False
+    
+    browser_data_dir = _get_browser_data_dir()
+    if not os.path.exists(browser_data_dir):
+        # 没有保存的浏览器状态，无法自动刷新
+        return False
+    
+    print("🔄 正在尝试自动刷新 Cookies...")
+    
+    try:
+        with sync_playwright() as p:
+            context = p.chromium.launch_persistent_context(
+                browser_data_dir,
+                headless=headless,
+                viewport={'width': 1280, 'height': 800},
+                locale='zh-CN'
+            )
+            
+            # 打开有道云笔记，触发可能的自动登录/session 刷新
+            page = context.pages[0] if context.pages else context.new_page()
+            page.goto("https://note.youdao.com/web/", wait_until="networkidle", timeout=30000)
+            
+            # 等待几秒让页面完成登录检查
+            page.wait_for_timeout(3000)
+            
+            # 检查是否有有效的 cookies
+            cookies = context.cookies()
+            cookie_names = [c['name'] for c in cookies]
+            
+            if all(name in cookie_names for name in CookieManager.REQUIRED_COOKIES):
+                # 保存刷新后的 cookies
+                cookies_data, error = CookieManager.convert_playwright_cookies(cookies)
+                if not error:
+                    success, _ = CookieManager.save(cookies_data)
+                    if success:
+                        print("✅ Cookies 已自动刷新")
+                        context.close()
+                        return True
+            
+            context.close()
+            return False
+            
+    except Exception as e:
+        logging.debug(f"自动刷新 cookies 失败: {e}")
+        return False
+
+
 def cmd_login(args):
-    """执行 login 命令 - 使用 Playwright 登录"""
+    """
+    执行 login 命令 - 使用 Playwright 持久化上下文登录
+    
+    使用 persistent context 保存登录状态，下次运行时自动复用。
+    """
     print("\n" + "=" * 60)
     print("  有道云笔记登录")
     print("=" * 60 + "\n")
@@ -240,19 +327,45 @@ def cmd_login(args):
         print()
         return 1
     
-    print("🚀 正在启动浏览器...")
-    print("📌 请在弹出的浏览器窗口中完成登录")
-    print("📌 支持：扫码登录 / 账号密码登录")
-    print("📌 登录成功后，程序会自动检测并保存 Cookies\n")
+    browser_data_dir = _get_browser_data_dir()
+    os.makedirs(browser_data_dir, exist_ok=True)
     
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False, args=['--start-maximized'])
-        context = browser.new_context(
+        # 使用 persistent context 保存登录状态
+        context = p.chromium.launch_persistent_context(
+            browser_data_dir,
+            headless=False,
             viewport={'width': 1280, 'height': 800},
-            locale='zh-CN'
+            locale='zh-CN',
+            args=['--start-maximized']
         )
         
-        page = context.new_page()
+        # 检查是否已经登录
+        cookies = context.cookies()
+        cookie_names = [c['name'] for c in cookies]
+        already_logged_in = all(name in cookie_names for name in CookieManager.REQUIRED_COOKIES)
+        
+        if already_logged_in:
+            print("✅ 检测到已有登录状态，正在验证...")
+            # 直接提取并保存 cookies
+            cookies_data, error = CookieManager.convert_playwright_cookies(cookies)
+            if not error:
+                success, _ = CookieManager.save(cookies_data)
+                if success:
+                    print(f"✅ Cookies 已更新: {CookieManager.get_default_path()}")
+                    print("\n🎉 登录状态有效！可以直接使用：")
+                    print("  python -m youdaonote pull")
+                    context.close()
+                    return 0
+        
+        # 需要登录
+        print("🚀 正在启动浏览器...")
+        print("📌 请在弹出的浏览器窗口中完成登录")
+        print("📌 支持：扫码登录 / 账号密码登录")
+        print("📌 登录成功后，程序会自动检测并保存 Cookies")
+        print("📌 下次运行 login 时将自动复用登录状态\n")
+        
+        page = context.pages[0] if context.pages else context.new_page()
         print("🌐 正在打开有道云笔记...")
         page.goto("https://note.youdao.com/web/")
         
@@ -280,7 +393,7 @@ def cmd_login(args):
             
             if waited >= max_wait_time:
                 print("❌ 等待超时，请重试")
-                browser.close()
+                context.close()
                 return 1
             
             page.wait_for_timeout(2000)
@@ -292,7 +405,7 @@ def cmd_login(args):
             
             if error:
                 print(f"\n❌ 转换 cookies 失败: {error}")
-                browser.close()
+                context.close()
                 return 1
             
             success, error = CookieManager.save(cookies_data)
@@ -305,17 +418,18 @@ def cmd_login(args):
                 print("\n  python -m youdaonote pull      # 全量导出")
                 print("  python -m youdaonote gui       # 图形界面")
                 print("  python -m youdaonote search XX # 搜索笔记")
+                print("\n📌 提示：下次运行 login 时将自动复用登录状态")
                 print()
-                browser.close()
+                context.close()
                 return 0
             else:
                 print(f"\n❌ 保存失败: {error}")
-                browser.close()
+                context.close()
                 return 1
                 
         except Exception as e:
             print(f"\n❌ 发生错误: {e}")
-            browser.close()
+            context.close()
             return 1
 
 
@@ -343,6 +457,87 @@ def cmd_gui(args):
         return 1
 
 
+def cmd_sync(args):
+    """执行 sync 命令 - 双向同步"""
+    from youdaonote.sync import SyncManager, SyncDirection, SyncWatcher
+    
+    # 加载配置
+    config, error = load_config()
+    if error:
+        print(f"⚠️ {error}")
+    
+    local_dir = args.dir or config.get("local_dir") or "./youdaonote"
+    
+    # 初始化 API
+    cli = YoudaoNoteCLI()
+    if not cli.init_api():
+        return 1
+    
+    # --watch 模式：自动同步守护进程
+    if args.watch:
+        print("\n" + "=" * 60)
+        print("  有道云笔记自动同步")
+        print("=" * 60 + "\n")
+        
+        interval = args.interval or 60
+        watcher = SyncWatcher(
+            cli.youdaonote_api, local_dir,
+            poll_interval=interval,
+        )
+        watcher.start()
+        return 0
+    
+    # 一次性同步模式
+    # 确定同步方向
+    if args.push and args.pull:
+        print("❌ 不能同时指定 --push 和 --pull")
+        return 1
+    elif args.push:
+        direction = SyncDirection.PUSH
+    elif args.pull:
+        direction = SyncDirection.PULL
+    else:
+        direction = SyncDirection.BOTH
+    
+    print("\n" + "=" * 60)
+    print("  有道云笔记双向同步")
+    print("=" * 60)
+    print(f"\n📁 本地目录: {os.path.abspath(local_dir)}")
+    print(f"🔄 同步方向: {direction.value}")
+    if args.dry_run:
+        print("👀 预览模式（不执行实际操作）")
+    print()
+    
+    # 执行同步
+    sync_manager = SyncManager(cli.youdaonote_api, local_dir)
+    
+    start_time = time.time()
+    stats = sync_manager.sync(
+        direction=direction,
+        dry_run=args.dry_run,
+        auto_git=not args.no_git,
+        auto_dedup=not args.no_dedup,
+    )
+    elapsed = time.time() - start_time
+    
+    print("\n" + "=" * 60)
+    print("  同步完成")
+    print("=" * 60)
+    print(f"\n⬇️  下载: {stats['downloaded']}")
+    print(f"⬆️  上传: {stats['uploaded']}")
+    print(f"⏭️  跳过: {stats['skipped']}")
+    if stats['conflicts'] > 0:
+        print(f"⚠️  冲突: {stats['conflicts']}")
+    if stats['errors'] > 0:
+        print(f"❌ 错误: {stats['errors']}")
+    if stats.get('dedup_deleted', 0) > 0:
+        print(f"🔍 去重: {stats['dedup_deleted']}")
+    print(f"\n⏱️  耗时: {elapsed:.1f} 秒")
+    print()
+    
+    return 0 if stats['errors'] == 0 else 1
+
+
 def main():
     """主函数"""
     parser = argparse.ArgumentParser(
@@ -354,6 +549,11 @@ def main():
   %(prog)s login                        # 登录（推荐首次使用）
   %(prog)s pull                         # 全量导出
   %(prog)s pull --dir ./backup          # 导出到指定目录
+  %(prog)s sync                         # 双向同步（一次）
+  %(prog)s sync --watch                 # 自动同步（持续监听）
+  %(prog)s sync --push                  # 只上传
+  %(prog)s sync --pull                  # 只下载
+  %(prog)s sync --dry-run               # 预览同步（不执行）
   %(prog)s gui                          # 启动图形界面
   %(prog)s list                         # 列出目录
   %(prog)s search 笔记                   # 搜索
@@ -399,6 +599,18 @@ def main():
     parser_download.add_argument('--exact', '-e', action='store_true', help='精确匹配')
     parser_download.add_argument('--dir', '-d', default='./youdaonote', help='下载目录')
     parser_download.set_defaults(func=cmd_download)
+    
+    # sync 命令
+    parser_sync = subparsers.add_parser('sync', help='双向同步笔记')
+    parser_sync.add_argument('--dir', '-d', default=None, help='本地同步目录（默认从配置读取）')
+    parser_sync.add_argument('--push', action='store_true', help='只上传（本地 → 云端）')
+    parser_sync.add_argument('--pull', action='store_true', help='只下载（云端 → 本地）')
+    parser_sync.add_argument('--dry-run', action='store_true', help='预览模式（不执行实际操作）')
+    parser_sync.add_argument('--watch', '-w', action='store_true', help='自动同步模式（监听文件变化 + 定时轮询）')
+    parser_sync.add_argument('--interval', '-i', type=int, default=60, help='云端轮询间隔秒数（默认 60）')
+    parser_sync.add_argument('--no-git', action='store_true', help='不自动 git commit')
+    parser_sync.add_argument('--no-dedup', action='store_true', help='不自动去重')
+    parser_sync.set_defaults(func=cmd_sync)
     
     args = parser.parse_args()
     

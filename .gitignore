@@ -17,6 +17,8 @@ venv/
 
 # 项目特定
 config/cookies.json
+config/browser_data/
+config/sync_metadata.json
 logs/
 backups/
 *.backup.*

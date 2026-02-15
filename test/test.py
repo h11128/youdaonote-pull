@@ -194,8 +194,8 @@ class YoudaoNoteCovertTest(unittest.TestCase):
         content = YoudaoNoteConvert._covert_xml_to_markdown_content("test/test.note")
         with open("test/test.md", "rb") as f:
             content_target = f.read().decode()
-        # CRLF => \r\n, LF => \n
-        self.assertEqual(content.replace("\r\n", "\n"), content_target)
+        # 统一换行符为 \n 后再比较（fixture 文件可能是 CRLF 或 LF）
+        self.assertEqual(content.replace("\r\n", "\n"), content_target.replace("\r\n", "\n"))
 
     def test_html_to_markdown(self):
         """
@@ -217,8 +217,8 @@ class YoudaoNoteCovertTest(unittest.TestCase):
         content = YoudaoNoteConvert._covert_json_to_markdown_content("test/test.json")
         with open("test/test-json.md", "rb") as f:
             content_target = f.read().decode()
-        # CRLF => \r\n, LF => \n
-        self.assertEqual(content.replace("\r\n", "\n"), content_target)
+        # 统一换行符为 \n 后再比较
+        self.assertEqual(content.replace("\r\n", "\n"), content_target.replace("\r\n", "\n"))
 
     def test_covert_json_to_markdown_single_line(self):
         """
@@ -228,8 +228,8 @@ class YoudaoNoteCovertTest(unittest.TestCase):
         line = YoudaoNoteConvert._covert_json_to_markdown_content("test/test-convert.json")
         with open("test/test-convert.md", "rb") as f:
             target = f.read().decode()
-        # CRLF => \r\n, LF => \n
-        self.assertEqual(line.replace("\r\n", "\n"), target)
+        # 统一换行符为 \n 后再比较
+        self.assertEqual(line.replace("\r\n", "\n"), target.replace("\r\n", "\n"))
 
 
 class YoudaoNoteDownloadTest(unittest.TestCase):

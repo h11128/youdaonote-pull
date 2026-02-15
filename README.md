@@ -5,6 +5,7 @@
 ## 功能
 
 - 📥 全量导出笔记（支持增量更新）
+- 🔄 双向同步（本地 ↔ 云端）
 - 📝 自动转换 XML/JSON 格式为 Markdown
 - 🖼️ 下载图片到本地或上传到图床
 - 🖥️ GUI 图形界面
@@ -51,7 +52,32 @@ python -m youdaonote pull --dir ./backup
 python -m youdaonote pull --ydnote-dir 工作笔记
 ```
 
-### 3. 其他命令
+### 3. 双向同步
+
+```bash
+# 双向同步（云端和本地互相更新）
+python -m youdaonote sync
+
+# 只上传（本地 → 云端）
+python -m youdaonote sync --push
+
+# 只下载（云端 → 本地）
+python -m youdaonote sync --pull
+
+# 预览模式（查看会执行哪些操作，但不实际执行）
+python -m youdaonote sync --dry-run
+
+# 指定同步目录
+python -m youdaonote sync --dir E:/Projects/notes
+```
+
+同步规则：
+- 只有本地有的文件 → 上传到云端
+- 只有云端有的文件 → 下载到本地
+- 两边都有且有修改 → 较新的版本覆盖较旧的
+- 支持 Markdown 和普通笔记格式
+
+### 4. 其他命令
 
 ```bash
 # 启动图形界面
@@ -70,18 +96,23 @@ python -m youdaonote download 关键词
 ## 项目结构
 
 ```
-├── youdaonote/         # 核心包
-│   ├── __main__.py     # CLI 入口
-│   ├── gui.py          # GUI 界面
-│   ├── api.py          # API 封装
-│   ├── search.py       # 搜索引擎
-│   ├── download.py     # 下载引擎
-│   ├── cookies.py      # Cookie 管理
-│   └── covert.py       # 格式转换
-├── config/             # 配置文件
-│   ├── cookies.json    # 登录凭证（自动生成）
-│   └── config.json     # 导出配置
-└── tools/              # 辅助工具
+├── youdaonote/             # 核心包
+│   ├── __main__.py         # CLI 入口
+│   ├── gui.py              # GUI 界面
+│   ├── api.py              # API 封装
+│   ├── search.py           # 搜索引擎
+│   ├── download.py         # 下载引擎
+│   ├── upload.py           # 上传引擎
+│   ├── sync.py             # 双向同步引擎
+│   ├── sync_metadata.py    # 同步元数据管理
+│   ├── md_to_note.py       # Markdown → 有道 JSON 转换
+│   ├── cookies.py          # Cookie 管理
+│   └── covert.py           # 格式转换（云端 → Markdown）
+├── config/                 # 配置文件
+│   ├── cookies.json        # 登录凭证（自动生成）
+│   ├── config.json         # 导出配置
+│   └── sync_metadata.json  # 同步元数据（自动生成）
+└── tools/                  # 辅助工具
 ```
 
 ## 配置文件
@@ -106,6 +137,7 @@ python -m youdaonote --help
   login      登录有道云笔记（使用浏览器）
   gui        启动图形界面
   pull       全量导出所有笔记
+  sync       双向同步笔记
   list       列出目录内容
   search     搜索文件或文件夹
   download   搜索并下载
@@ -113,6 +145,12 @@ python -m youdaonote --help
 # pull 参数
   --dir, -d       导出目录（默认: ./youdaonote）
   --ydnote-dir, -y  只导出有道云中的指定目录
+
+# sync 参数
+  --dir, -d       本地同步目录（默认从配置读取）
+  --push          只上传（本地 → 云端）
+  --pull          只下载（云端 → 本地）
+  --dry-run       预览模式（不执行实际操作）
 
 # search/download 参数
   keyword         搜索关键词
