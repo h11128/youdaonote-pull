@@ -41,11 +41,14 @@ windows = ["win32-setctime>=1.0.0"]
 login = ["playwright>=1.40.0"]
 # 从浏览器提取 cookies
 browser = ["browser-cookie3>=0.19.0"]
+# 文件监听（watch 模式）
+watch = ["watchdog>=3.0.0"]
 # 完整安装（推荐）
 full = [
     "win32-setctime>=1.0.0; sys_platform == 'win32'",
     "playwright>=1.40.0",
     "browser-cookie3>=0.19.0",
+    "watchdog>=3.0.0",
 ]
 # 开发依赖
 dev = [

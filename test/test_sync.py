@@ -3,9 +3,10 @@
 双向同步相关模块的单元测试
 
 覆盖：
-- SyncMetadata: 元数据增删改查
+- SyncMetadata: 元数据增删改查 + 反向索引
 - markdown_to_note_json: Markdown → 有道 JSON 转换
 - decide_action: 同步决策逻辑
+- _cloud_score: 去重评分逻辑
 """
 
 import json
@@ -19,6 +20,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from youdaonote.sync_metadata import SyncMetadata
 from youdaonote.md_to_note import markdown_to_note_json
 from youdaonote.sync import decide_action, SyncAction
+from youdaonote.dedup import _cloud_score
 
 
 # ========== SyncMetadata 测试 ==========
@@ -164,6 +166,114 @@ class SyncMetadataTest(unittest.TestCase):
 
         # Then — 不崩溃，使用空数据
         self.assertEqual(meta.get_all_files(), {})
+
+    # ---------- 反向索引 (find_cloud_file_by_hash) ----------
+
+    def test_find_cloud_file_by_hash_hit(self):
+        """通过 content_hash 查找云端文件——命中"""
+        # Given
+        self.meta.set_file_info("a.md", "WEBA", cloud_mtime=1, content_hash="abc123")
+
+        # When
+        result = self.meta.find_cloud_file_by_hash("abc123")
+
+        # Then
+        self.assertEqual(result, "a.md")
+
+    def test_find_cloud_file_by_hash_miss(self):
+        """通过 content_hash 查找——未命中"""
+        # Given
+        self.meta.set_file_info("a.md", "WEBA", cloud_mtime=1, content_hash="abc123")
+
+        # When / Then
+        self.assertIsNone(self.meta.find_cloud_file_by_hash("zzz999"))
+
+    def test_find_cloud_file_by_hash_exclude_self(self):
+        """排除自身后，如果没有其他匹配则返回 None"""
+        # Given
+        self.meta.set_file_info("a.md", "WEBA", cloud_mtime=1, content_hash="abc123")
+
+        # When
+        result = self.meta.find_cloud_file_by_hash("abc123", exclude_path="a.md")
+
+        # Then
+        self.assertIsNone(result)
+
+    def test_find_cloud_file_by_hash_exclude_self_with_other(self):
+        """排除自身后，返回另一个匹配"""
+        # Given
+        self.meta.set_file_info("a.md", "WEBA", cloud_mtime=1, content_hash="abc123")
+        self.meta.set_file_info("b.md", "WEBB", cloud_mtime=2, content_hash="abc123")
+
+        # When
+        result = self.meta.find_cloud_file_by_hash("abc123", exclude_path="a.md")
+
+        # Then
+        self.assertEqual(result, "b.md")
+
+    def test_find_cloud_file_by_hash_ignores_no_file_id(self):
+        """没有 file_id 的文件不会被反向索引命中"""
+        # Given — set_file_info 的 file_id 参数是空字符串
+        self.meta._data["files"]["local.md"] = {
+            "file_id": "",  # 无 file_id
+            "cloud_mtime": 1,
+            "local_mtime": 1,
+            "content_hash": "abc123",
+        }
+        self.meta._rebuild_hash_index()
+
+        # When / Then
+        self.assertIsNone(self.meta.find_cloud_file_by_hash("abc123"))
+
+    def test_hash_index_survives_save_reload(self):
+        """保存后重新加载，反向索引自动重建"""
+        # Given
+        self.meta.set_file_info("a.md", "WEBA", cloud_mtime=1, content_hash="hash1")
+        self.meta.save()
+
+        # When
+        reloaded = SyncMetadata(metadata_path=self.metadata_path)
+
+        # Then
+        self.assertEqual(reloaded.find_cloud_file_by_hash("hash1"), "a.md")
+
+    def test_hash_index_updated_on_remove(self):
+        """删除文件后反向索引同步清理"""
+        # Given
+        self.meta.set_file_info("a.md", "WEBA", cloud_mtime=1, content_hash="hash1")
+
+        # When
+        self.meta.remove_file("a.md")
+
+        # Then
+        self.assertIsNone(self.meta.find_cloud_file_by_hash("hash1"))
+
+    def test_hash_index_reindex_on_remove(self):
+        """删除文件后，同 hash 的其他文件自动接替索引"""
+        # Given — 两个文件共享同一个 content_hash
+        self.meta.set_file_info("a.md", "WEBA", cloud_mtime=1, content_hash="shared")
+        self.meta.set_file_info("b.md", "WEBB", cloud_mtime=2, content_hash="shared")
+
+        # When — 删除索引指向的那个文件
+        indexed_path = self.meta._hash_index.get("shared")
+        other_path = "b.md" if indexed_path == "a.md" else "a.md"
+        self.meta.remove_file(indexed_path)
+
+        # Then — 索引自动指向另一个文件
+        result = self.meta.find_cloud_file_by_hash("shared")
+        self.assertEqual(result, other_path)
+
+    def test_hash_index_updated_on_update_content_hash(self):
+        """update_content_hash 后反向索引更新"""
+        # Given
+        self.meta.set_file_info("a.md", "WEBA", cloud_mtime=1, content_hash="old")
+
+        # When
+        self.meta.update_content_hash("a.md", "new")
+
+        # Then
+        self.assertIsNone(self.meta.find_cloud_file_by_hash("old"))
+        self.assertEqual(self.meta.find_cloud_file_by_hash("new"), "a.md")
 
 
 # ========== markdown_to_note_json 测试 ==========
@@ -368,6 +478,297 @@ class DecideActionTest(unittest.TestCase):
             meta_local_mtime=None, meta_cloud_mtime=None,
         )
         self.assertEqual(result, SyncAction.UPLOAD)
+
+
+# ========== _cloud_score 评分测试 ==========
+
+class CloudScoreTest(unittest.TestCase):
+    """
+    去重评分逻辑测试
+    python -m pytest test/test_sync.py::CloudScoreTest -v
+    """
+
+    def setUp(self):
+        self.tmpdir = tempfile.mkdtemp()
+        self.metadata_path = os.path.join(self.tmpdir, "sync_metadata.json")
+        self.meta = SyncMetadata(metadata_path=self.metadata_path)
+
+    def tearDown(self):
+        if os.path.exists(self.metadata_path):
+            os.remove(self.metadata_path)
+        os.rmdir(self.tmpdir)
+
+    def test_deeper_path_scores_higher(self):
+        """路径越深分数越高"""
+        # Given
+        shallow = "a.md"
+        deep = "dir1/dir2/a.md"
+
+        # When
+        score_shallow = _cloud_score(shallow, None, self.tmpdir)
+        score_deep = _cloud_score(deep, None, self.tmpdir)
+
+        # Then
+        self.assertGreater(score_deep, score_shallow)
+
+    def test_shorter_name_scores_higher(self):
+        """同一目录下，文件名越短分数越高"""
+        # Given — 两个文件在同一级目录
+        clean = "dir/test.md"
+        messy = "dir/test(1)(14-42-31).md"
+
+        # When
+        score_clean = _cloud_score(clean, None, self.tmpdir)
+        score_messy = _cloud_score(messy, None, self.tmpdir)
+
+        # Then — 深度相同，clean name 分数更高
+        self.assertGreater(score_clean, score_messy)
+
+    def test_earlier_create_time_scores_higher(self):
+        """创建时间越早分数越高"""
+        # Given
+        self.meta.set_file_info("old.md", "WEB1", cloud_mtime=2000, create_time=1000)
+        self.meta.set_file_info("new.md", "WEB2", cloud_mtime=2000, create_time=5000)
+
+        # When
+        score_old = _cloud_score("old.md", self.meta, self.tmpdir)
+        score_new = _cloud_score("new.md", self.meta, self.tmpdir)
+
+        # Then — 同深度同名长度，早创建的分数更高
+        self.assertGreater(score_old, score_new)
+
+    def test_score_without_metadata(self):
+        """没有元数据时也不崩溃"""
+        # When / Then — 不抛异常
+        score = _cloud_score("any/path.md", None, self.tmpdir)
+        self.assertIsInstance(score, tuple)
+        self.assertEqual(len(score), 3)
+
+
+
+# ========== 去重碰撞防护测试 ==========
+
+class DedupCollisionTest(unittest.TestCase):
+    """
+    MD5 碰撞防护测试：同 hash 不同大小的文件不应被去重
+    python -m pytest test/test_sync.py::DedupCollisionTest -v
+    """
+
+    def setUp(self):
+        self.tmpdir = tempfile.mkdtemp()
+
+    def tearDown(self):
+        import shutil
+        shutil.rmtree(self.tmpdir)
+
+    def test_same_hash_different_size_not_deduped(self):
+        """同 hash 但不同大小的文件不当作重复"""
+        from youdaonote.dedup import auto_dedup
+
+        # Given — 创建两个文件，手动构造"碰撞"场景
+        # 正常情况下 MD5 不会碰撞，这里直接用 metadata 模拟
+        meta = SyncMetadata(metadata_path=os.path.join(self.tmpdir, "meta.json"))
+
+        # 写入两个不同大小的文件
+        f1 = os.path.join(self.tmpdir, "file1.md")
+        f2 = os.path.join(self.tmpdir, "file2.md")
+        with open(f1, "w") as f:
+            f.write("short")
+        with open(f2, "w") as f:
+            f.write("this is a much longer content")
+
+        # 给它们赋相同的 content_hash（模拟碰撞）+ 不同的 file_id（都是云端文件）
+        meta.set_file_info("file1.md", "WEB1", cloud_mtime=1, content_hash="collision_hash")
+        meta.set_file_info("file2.md", "WEB2", cloud_mtime=2, content_hash="collision_hash")
+        meta.save()
+
+        # When
+        stats = auto_dedup(self.tmpdir, metadata=meta, dry_run=True)
+
+        # Then — 两个文件大小不同，碰撞防护应该拆分它们，不产生删除动作
+        self.assertEqual(stats["deleted"], 0)
+
+    def test_same_hash_same_size_deduped(self):
+        """同 hash 同大小的文件正常去重"""
+        from youdaonote.dedup import auto_dedup
+
+        # Given — 两个内容完全相同的文件
+        meta = SyncMetadata(metadata_path=os.path.join(self.tmpdir, "meta.json"))
+
+        f1 = os.path.join(self.tmpdir, "file1.md")
+        f2 = os.path.join(self.tmpdir, "file2.md")
+        content = "identical content"
+        with open(f1, "w") as f:
+            f.write(content)
+        with open(f2, "w") as f:
+            f.write(content)
+
+        # 两个都是云端文件，相同 hash
+        real_hash = SyncMetadata.compute_content_hash(f1)
+        meta.set_file_info("file1.md", "WEB1", cloud_mtime=1, content_hash=real_hash)
+        meta.set_file_info("file2.md", "WEB2", cloud_mtime=2, content_hash=real_hash)
+        meta.save()
+
+        # When
+        stats = auto_dedup(self.tmpdir, metadata=meta, dry_run=True)
+
+        # Then — 同大小同 hash，应该触发去重（保留 1 个删除 1 个）
+        self.assertEqual(stats["deleted"], 1)
+        self.assertEqual(stats["kept"], 1)
+
+
+# ========== covert.py 防御性处理测试 ==========
+
+class JsonConvertDefensiveTest(unittest.TestCase):
+    """
+    JSON 转 Markdown 的防御性处理测试
+    python -m pytest test/test_sync.py::JsonConvertDefensiveTest -v
+    """
+
+    def test_missing_key_5_returns_empty(self):
+        """JSON 缺少 '5' 内容字段时返回空字符串"""
+        from youdaonote.covert import YoudaoNoteConvert
+
+        # Given — 写一个缺少 key "5" 的 JSON 文件
+        tmpdir = tempfile.mkdtemp()
+        f = os.path.join(tmpdir, "bad.note")
+        with open(f, "w", encoding="utf-8") as fh:
+            json.dump({"3": "id-only"}, fh)
+
+        # When / Then — 不崩溃
+        try:
+            YoudaoNoteConvert.covert_json_to_markdown(f)
+        except KeyError:
+            self.fail("缺少 '5' 字段时不应抛出 KeyError")
+        finally:
+            import shutil
+            shutil.rmtree(tmpdir)
+
+    def test_invalid_json_returns_empty(self):
+        """文件不是合法 JSON 时不崩溃"""
+        from youdaonote.covert import YoudaoNoteConvert
+
+        tmpdir = tempfile.mkdtemp()
+        f = os.path.join(tmpdir, "invalid.note")
+        with open(f, "w", encoding="utf-8") as fh:
+            fh.write("this is not json {{{")
+
+        try:
+            YoudaoNoteConvert.covert_json_to_markdown(f)
+        except (KeyError, json.JSONDecodeError):
+            self.fail("非法 JSON 时不应崩溃")
+        finally:
+            import shutil
+            shutil.rmtree(tmpdir)
+
+    def test_heading_missing_key_4(self):
+        """标题节点缺少 '4' 字段时不崩溃"""
+        from youdaonote.covert import JsonConvert
+
+        # Given — 一个缺少 "4" 的标题内容
+        content = {"5": [{"7": [{"8": "test text"}]}], "6": "h"}
+
+        # When / Then — 不抛异常
+        converter = JsonConvert()
+        try:
+            result = converter.convert_h_func(content)
+        except (AttributeError, KeyError, TypeError):
+            self.fail("标题缺少 '4' 字段时不应崩溃")
+
+    def test_image_missing_key_4(self):
+        """图片节点缺少 '4' 字段时不崩溃"""
+        from youdaonote.covert import JsonConvert
+
+        content = {"6": "im"}
+        converter = JsonConvert()
+        try:
+            result = converter.convert_im_func(content)
+            self.assertIn("![](", result)
+        except (AttributeError, KeyError, TypeError):
+            self.fail("图片缺少 '4' 字段时不应崩溃")
+
+
+# ========== safe_long_path 测试 ==========
+
+class SafeLongPathTest(unittest.TestCase):
+    """
+    Windows 长路径处理测试
+    python -m pytest test/test_sync.py::SafeLongPathTest -v
+    """
+
+    def test_short_path_unchanged(self):
+        """短路径原样返回"""
+        from youdaonote.common import safe_long_path
+        path = "C:\\Users\\test\\notes\\file.md"
+        result = safe_long_path(path)
+        # 短路径不应被修改（除非恰好在 Windows 且超长）
+        if len(path) < 240:
+            self.assertFalse(result.startswith("\\\\?\\"))
+
+    def test_already_prefixed_unchanged(self):
+        """已有 \\\\?\\ 前缀的路径不会重复添加"""
+        from youdaonote.common import safe_long_path
+        path = "\\\\?\\" + "C:\\" + "a" * 300 + ".md"
+        result = safe_long_path(path)
+        # 不应出现双重前缀
+        self.assertFalse(result.startswith("\\\\?\\\\\\?\\"))
+
+    def test_empty_path(self):
+        """空路径不崩溃"""
+        from youdaonote.common import safe_long_path
+        result = safe_long_path("")
+        self.assertEqual(result, "" if len("") < 240 else result)
+
+
+# ========== api._safe_json 测试 ==========
+
+class SafeJsonTest(unittest.TestCase):
+    """
+    API JSON 安全解析测试
+    python -m pytest test/test_sync.py::SafeJsonTest -v
+    """
+
+    def test_valid_json(self):
+        """正常 JSON 响应解析成功"""
+        from youdaonote.api import YoudaoNoteApi
+
+        class FakeResp:
+            status_code = 200
+            text = '{"key": "value"}'
+            def json(self):
+                return {"key": "value"}
+
+        result = YoudaoNoteApi._safe_json(FakeResp())
+        self.assertEqual(result, {"key": "value"})
+
+    def test_invalid_json_raises_runtime_error(self):
+        """非 JSON 响应抛出 RuntimeError 并包含有用信息"""
+        from youdaonote.api import YoudaoNoteApi
+
+        class FakeResp:
+            status_code = 502
+            text = "<html>Bad Gateway</html>"
+            def json(self):
+                raise ValueError("No JSON")
+
+        with self.assertRaises(RuntimeError) as ctx:
+            YoudaoNoteApi._safe_json(FakeResp())
+
+        self.assertIn("502", str(ctx.exception))
+        self.assertIn("Bad Gateway", str(ctx.exception))
+
+    def test_empty_response_raises_runtime_error(self):
+        """空响应抛出 RuntimeError"""
+        from youdaonote.api import YoudaoNoteApi
+
+        class FakeResp:
+            status_code = 200
+            text = ""
+            def json(self):
+                raise ValueError("Empty")
+
+        with self.assertRaises(RuntimeError):
+            YoudaoNoteApi._safe_json(FakeResp())
 
 
 if __name__ == "__main__":

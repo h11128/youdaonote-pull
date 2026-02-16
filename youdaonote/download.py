@@ -17,7 +17,7 @@ from typing import Dict, Optional, Tuple
 from youdaonote.api import YoudaoNoteApi
 from youdaonote.covert import YoudaoNoteConvert
 from youdaonote.image import ImagePull
-from youdaonote.common import get_config_directory, get_script_directory
+from youdaonote.common import get_config_directory, get_script_directory, safe_long_path
 
 # 尝试导入 Windows 特定模块
 try:
@@ -69,7 +69,8 @@ class YoudaoNoteDownload:
 
     def download_file(self, file_id: str, file_name: str, local_dir: str,
                       modify_time: int = 0, create_time: int = 0,
-                      convert_to_md: bool = True) -> bool:
+                      convert_to_md: bool = True,
+                      skip_action_check: bool = False) -> bool:
         """
         下载单个文件
         :param file_id: 文件 ID
@@ -78,6 +79,7 @@ class YoudaoNoteDownload:
         :param modify_time: 修改时间（毫秒时间戳）
         :param create_time: 创建时间（毫秒时间戳）
         :param convert_to_md: 是否转换为 Markdown
+        :param skip_action_check: 跳过内部的 SKIP/UPDATE 判断（调用方已做过决策时设为 True）
         :return: 是否成功
         """
         try:
@@ -88,7 +90,8 @@ class YoudaoNoteDownload:
 
             # 对于可能转换的文件类型（.note/.clip/无后缀），最终路径是 .md
             # 先用 .md 路径做 SKIP 预判，避免不必要的下载
-            if convert_to_md and youdao_file_suffix in [".note", ".clip", ""]:
+            # （skip_action_check=True 时跳过：调用方已做过决策）
+            if not skip_action_check and convert_to_md and youdao_file_suffix in [".note", ".clip", ""]:
                 candidate_md_path = os.path.join(
                     local_dir,
                     os.path.splitext(file_name)[0] + MARKDOWN_SUFFIX
@@ -110,21 +113,76 @@ class YoudaoNoteDownload:
             else:
                 local_file_path = original_file_path
 
-            # 判断文件操作
-            file_action = self._get_file_action(local_file_path, modify_time / 1000 if modify_time else 0)
-            
-            if file_action == FileAction.SKIP:
-                logging.debug(f"跳过文件: {local_file_path}")
-                return True
+            # Windows 长路径保护
+            original_file_path = safe_long_path(original_file_path)
+            local_file_path = safe_long_path(local_file_path)
 
-            if file_action == FileAction.UPDATE:
-                # 删除旧文件
+            # 判断文件操作（skip_action_check=True 时跳过：调用方已做过决策）
+            if skip_action_check:
+                file_action = FileAction.ADD
                 if os.path.exists(local_file_path):
-                    os.remove(local_file_path)
+                    file_action = FileAction.UPDATE
+            else:
+                file_action = self._get_file_action(local_file_path, modify_time / 1000 if modify_time else 0)
+                if file_action == FileAction.SKIP:
+                    logging.debug(f"跳过文件: {local_file_path}")
+                    return True
 
-            # 保存并转换文件（使用已下载的 content，不再重复请求）
-            self._save_and_convert(file_id, content, original_file_path, local_file_path,
-                                   file_type, youdao_file_suffix, convert_to_md)
+            # 先写到临时文件，成功后再替换原文件（避免写入失败时丢失原文件）
+            tmp_original = original_file_path + ".tmp"
+            try:
+                # _save_and_convert 内部会把内容写入 tmp_original，
+                # 对 .note/.clip XML/JSON 还会把 tmp_original rename 为 base+".md"
+                self._save_and_convert(file_id, content, tmp_original,
+                                       local_file_path + ".tmp" if local_file_path != original_file_path else tmp_original,
+                                       file_type, youdao_file_suffix, convert_to_md)
+
+                # 确定转换后文件的实际路径：
+                # covert.py 的 XML/JSON 转换会把 tmp_original 改名为 splitext(tmp_original)[0]+".md"
+                # 即 "file.note.tmp" → "file.note.md"
+                if convert_to_md and file_type in (FileType.XML, FileType.JSON):
+                    converted_path = os.path.splitext(tmp_original)[0] + MARKDOWN_SUFFIX
+                    if os.path.exists(converted_path):
+                        os.replace(converted_path, local_file_path)
+                    elif os.path.exists(tmp_original):
+                        # 转换函数没有改名（可能文件为空），直接移动原文件
+                        os.replace(tmp_original, local_file_path)
+                else:
+                    # Markdown 或 OTHER 类型：内容直接写在 tmp_original
+                    final_src = tmp_original
+                    if local_file_path != original_file_path:
+                        # 有些场景下图片迁移可能写到了 local_file_path+".tmp"
+                        tmp_local = local_file_path + ".tmp"
+                        if os.path.exists(tmp_local):
+                            final_src = tmp_local
+                    os.replace(final_src, local_file_path)
+
+                # 清理可能残留的中间文件
+                for leftover in (tmp_original, tmp_original.replace(".tmp", MARKDOWN_SUFFIX)):
+                    if leftover != local_file_path and os.path.exists(leftover):
+                        try:
+                            os.remove(leftover)
+                        except OSError:
+                            pass
+            except BaseException:
+                # 清理所有临时文件，原文件不受影响
+                for p in (tmp_original,
+                          os.path.splitext(tmp_original)[0] + MARKDOWN_SUFFIX,
+                          local_file_path + ".tmp"):
+                    if os.path.exists(p):
+                        try:
+                            os.remove(p)
+                        except OSError:
+                            pass
+                raise
+
+            # 处理图片链接（在文件已到达最终位置后执行）
+            if file_type != FileType.OTHER or youdao_file_suffix == MARKDOWN_SUFFIX:
+                try:
+                    image_pull = ImagePull(self.api, self.smms_secret_token, self.is_relative_path)
+                    image_pull.migration_ydnote_url(local_file_path)
+                except Exception as e:
+                    logging.warning(f"图片链接迁移失败: {e}")
 
             # 设置文件时间
             self._set_file_time(local_file_path, create_time / 1000 if create_time else 0,
@@ -287,10 +345,7 @@ class YoudaoNoteDownload:
             elif file_type == FileType.JSON:
                 YoudaoNoteConvert.covert_json_to_markdown(original_file_path)
 
-        # 处理图片链接
-        if file_type != FileType.OTHER or youdao_file_suffix == MARKDOWN_SUFFIX:
-            image_pull = ImagePull(self.api, self.smms_secret_token, self.is_relative_path)
-            image_pull.migration_ydnote_url(local_file_path)
+        # 图片链接迁移由调用方在文件移动到最终位置后执行（见 download_file）
 
     def _set_file_time(self, file_path: str, create_time: float, modify_time: float):
         """

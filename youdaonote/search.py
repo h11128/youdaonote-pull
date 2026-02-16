@@ -17,6 +17,8 @@ class YoudaoNoteSearch:
     提供统一的搜索和目录浏览功能
     """
 
+    MAX_SEARCH_DEPTH = 50
+
     def __init__(self, api: YoudaoNoteApi):
         """
         初始化搜索引擎
@@ -97,7 +99,7 @@ class YoudaoNoteSearch:
 
     def _search_recursively(self, dir_id: str, target_name: str, search_type: str,
                            exact_match: bool, results: List[Dict], 
-                           current_path: str = ""):
+                           current_path: str = "", depth: int = 0):
         """
         递归搜索
         :param dir_id: 当前目录 ID
@@ -106,7 +108,12 @@ class YoudaoNoteSearch:
         :param exact_match: 是否精确匹配
         :param results: 结果列表（会被修改）
         :param current_path: 当前路径
+        :param depth: 当前递归深度
         """
+        if depth >= self.MAX_SEARCH_DEPTH:
+            logging.warning(f"搜索深度已达上限 ({self.MAX_SEARCH_DEPTH})，跳过: {current_path}")
+            return
+
         try:
             dir_info = self.api.get_dir_info_by_id(dir_id)
 
@@ -149,7 +156,8 @@ class YoudaoNoteSearch:
                 # 如果是文件夹，继续递归搜索
                 if is_dir:
                     self._search_recursively(entry_id, target_name, search_type, 
-                                           exact_match, results, current_entry_path)
+                                           exact_match, results, current_entry_path,
+                                           depth + 1)
 
         except Exception as e:
             logging.error(f"搜索目录 {current_path} 时出错: {e}")

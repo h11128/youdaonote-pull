@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import threading
 import time
 import uuid
 
@@ -44,13 +45,15 @@ class YoudaoNoteApi(object):
     # 连接池配置：并发 worker 最多 ~18 个线程，给一些余量
     POOL_CONNECTIONS = 20
     POOL_MAXSIZE = 20
+    # 默认 HTTP 超时（连接超时, 读取超时），秒
+    DEFAULT_TIMEOUT = (10, 60)
 
     def __init__(self, cookies_path=None):
         """
         初始化
         :param cookies_path:
         """
-        self.session = requests.session()  # 使用 session 维持有道云笔记的登陆状态
+        self.session = requests.session()
         # 增大连接池，适配并发扫描/下载/上传
         adapter = HTTPAdapter(
             pool_connections=self.POOL_CONNECTIONS,
@@ -58,6 +61,7 @@ class YoudaoNoteApi(object):
         )
         self.session.mount("https://", adapter)
         self.session.mount("http://", adapter)
+        self._session_lock = threading.Lock()
         self.session.headers = {
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) "
             "Chrome/100.0.4896.88 Safari/537.36",
@@ -78,54 +82,95 @@ class YoudaoNoteApi(object):
     def login_by_cookies(self) -> str:
         """
         使用 Cookies 登录，其实就是设置 Session 的 Cookies
-        :return: error_msg
+        :return: error_msg，成功返回 None
         """
         try:
-            cookies = self._covert_cookies()
+            cookies = self._convert_cookies()
         except Exception as err:
-            return format(err)
+            return str(err)
+
+        if not cookies:
+            return "cookies.json 中 cookies 列表为空"
+
         for cookie in cookies:
+            if not isinstance(cookie, list) or len(cookie) < 4:
+                continue
             self.session.cookies.set(
                 name=cookie[0], value=cookie[1], domain=cookie[2], path=cookie[3]
             )
-        self.cstk = (
-            cookies[0][1] if cookies[0][0] == "YNOTE_CSTK" else None
-        )  # cstk 用于请求时接口验证
+
+        # 遍历查找 YNOTE_CSTK（不假设位于第一项）
+        self.cstk = None
+        for cookie in cookies:
+            if isinstance(cookie, list) and len(cookie) >= 2 and cookie[0] == "YNOTE_CSTK":
+                self.cstk = cookie[1]
+                break
         if not self.cstk:
             return "YNOTE_CSTK 字段为空"
 
-    def _covert_cookies(self) -> list:
+    def _convert_cookies(self) -> list:
         """
-        读取 cookies 文件的 cookies，并转换为字典
+        读取 cookies 文件的 cookies，并转换为列表
         :return: cookies
         """
         with open(self.cookies_path, "rb") as f:
             json_str = f.read().decode("utf-8")
 
         try:
-            cookies_dict = json.loads(json_str)  # 将字符串转换为字典
-            cookies = cookies_dict["cookies"]
-        except Exception:
-            raise Exception("转换「{}」为字典时出现错误".format(self.cookies_path))
+            cookies_dict = json.loads(json_str)
+        except json.JSONDecodeError as e:
+            raise Exception(f"cookies.json 不是有效的 JSON: {e}")
+
+        if "cookies" not in cookies_dict:
+            raise Exception(f"cookies.json 中缺少 'cookies' 字段")
+
+        cookies = cookies_dict["cookies"]
+        if not isinstance(cookies, list):
+            raise Exception(f"cookies.json 中 'cookies' 字段不是列表")
+
         return cookies
 
     def http_post(self, url, data=None, files=None):
         """
-        封装 post 请求
+        封装 post 请求（带超时和状态码检查）
         :param url:
         :param data:
         :param files:
         :return: response
         """
-        return self.session.post(url, data=data, files=files)
+        with self._session_lock:
+            resp = self.session.post(url, data=data, files=files, timeout=self.DEFAULT_TIMEOUT)
+        resp.raise_for_status()
+        return resp
 
     def http_get(self, url):
         """
-        封装 get 请求
+        封装 get 请求（带超时和状态码检查）
         :param url:
         :return: response
         """
-        return self.session.get(url)
+        with self._session_lock:
+            resp = self.session.get(url, timeout=self.DEFAULT_TIMEOUT)
+        resp.raise_for_status()
+        return resp
+
+    @staticmethod
+    def _safe_json(response) -> dict:
+        """安全解析 JSON 响应，失败时抛出明确的异常"""
+        try:
+            return response.json()
+        except (ValueError, json.JSONDecodeError) as e:
+            text = response.text[:200] if response.text else "(空)"
+            raise RuntimeError(
+                f"API 返回非 JSON 内容 (HTTP {response.status_code}): {text}"
+            ) from e
+
+    def _require_auth(self) -> None:
+        """验证已登录（cstk 不为空），否则抛异常。所有需要认证的 API 方法应先调用此方法。"""
+        if not self.cstk:
+            raise RuntimeError(
+                "未登录：cstk 为空。请先调用 login_by_cookies() 或运行 `python -m youdaonote login`"
+            )
 
     def get_root_dir_info_id(self) -> dict:
         """
@@ -135,8 +180,9 @@ class YoudaoNoteApi(object):
             ...
         }
         """
+        self._require_auth()
         data = {"path": "/", "entire": "true", "purge": "false", "cstk": self.cstk}
-        return self.http_post(self.ROOT_ID_URL.format(cstk=self.cstk), data=data).json()
+        return self._safe_json(self.http_post(self.ROOT_ID_URL.format(cstk=self.cstk), data=data))
 
     def get_dir_info_by_id(self, dir_id) -> dict:
         """
@@ -146,6 +192,7 @@ class YoudaoNoteApi(object):
             'entries': [所有条目]
         }
         """
+        self._require_auth()
         all_entries = []
         page_size = self.DIR_PAGE_SIZE
         offset = 0
@@ -156,7 +203,7 @@ class YoudaoNoteApi(object):
             )
             if offset > 0:
                 url += f"&startIndex={offset}"
-            data = self.http_get(url).json()
+            data = self._safe_json(self.http_get(url))
             entries = data.get("entries", [])
             all_entries.extend(entries)
 
@@ -175,6 +222,7 @@ class YoudaoNoteApi(object):
         :param file_id:
         :return: response，内容为笔记字节码
         """
+        self._require_auth()
         data = {
             "fileId": file_id,
             "version": -1,
@@ -214,6 +262,7 @@ class YoudaoNoteApi(object):
         :param is_create: 是否为新建笔记
         :return: API 响应
         """
+        self._require_auth()
         now = int(time.time())
         create_time = create_time or now
         modify_time = modify_time or now
@@ -254,7 +303,7 @@ class YoudaoNoteApi(object):
 
         url = self.PUSH_URL.format(cstk=self.cstk)
         response = self.http_post(url, data=data)
-        return response.json()
+        return self._safe_json(response)
 
     def rename_file(self, file_id: str, new_name: str, domain: int = 1) -> dict:
         """
@@ -265,6 +314,7 @@ class YoudaoNoteApi(object):
         :param domain: 笔记类型，0=普通笔记，1=Markdown
         :return: API 响应
         """
+        self._require_auth()
         now = int(time.time())
         url = (
             f"https://note.youdao.com/yws/api/personal/sync?method=push"
@@ -283,7 +333,7 @@ class YoudaoNoteApi(object):
         )
         data = {"cstk": self.cstk}
         response = self.http_post(url, data=data)
-        return response.json()
+        return self._safe_json(response)
 
     def delete_file(self, file_id: str) -> dict:
         """
@@ -292,10 +342,11 @@ class YoudaoNoteApi(object):
         :param file_id: 笔记 ID
         :return: API 响应
         """
+        self._require_auth()
         url = self.DELETE_URL.format(file_id=file_id, cstk=self.cstk)
         data = {"cstk": self.cstk}
         response = self.http_post(url, data=data)
-        return response.json()
+        return self._safe_json(response)
 
     def create_dir(self, parent_id: str, name: str) -> dict:
         """
@@ -307,6 +358,7 @@ class YoudaoNoteApi(object):
         :param name: 目录名
         :return: API 响应，包含目录的 ID（在 fileEntry.id 中）
         """
+        self._require_auth()
         now = int(time.time())
         file_id = self.generate_file_id()
         
@@ -327,7 +379,7 @@ class YoudaoNoteApi(object):
         
         url = self.PUSH_URL.format(cstk=self.cstk)
         response = self.http_post(url, data=data)
-        result = response.json()
+        result = self._safe_json(response)
         
         # 处理重复目录名：API 返回 error=20108 并提供已有目录的 ID
         if "error" in result and result.get("error") == "20108":
@@ -349,6 +401,7 @@ class YoudaoNoteApi(object):
         :param file_id: 文件 ID
         :return: 文件信息
         """
+        self._require_auth()
         url = (
             f"https://note.youdao.com/yws/api/personal/file/{file_id}"
             f"?method=getById&keyfrom=web&cstk={self.cstk}"
@@ -360,4 +413,4 @@ class YoudaoNoteApi(object):
             "cstk": self.cstk,
         }
         response = self.http_post(url, data=data)
-        return response.json()
+        return self._safe_json(response)

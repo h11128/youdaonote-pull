@@ -7,6 +7,8 @@ from urllib.parse import urlparse
 
 import requests
 
+from youdaonote.common import safe_long_path
+
 REGEX_IMAGE_URL = re.compile(r"!\[.*?\]\((.*?note\.youdao\.com.*?)\)")
 REGEX_ATTACH = re.compile(r"\[(.*?)\]\(((http|https)://note\.youdao\.com.*?)\)")
 # 有道云笔记的图片地址
@@ -61,7 +63,9 @@ class ImagePull:
             # 将绝对路径替换为相对路径，实现满足 Obsidian 格式要求
             # 将 image_path 路径中 images 之前的路径去掉，只保留以 images 开头的之后的路径
             if self.is_relative_path and not self.smms_secret_token:
-                image_path = image_path[image_path.find(IMAGES) :]
+                idx = image_path.find(IMAGES)
+                if idx >= 0:
+                    image_path = image_path[idx:]
 
             image_path = self._url_encode(image_path)
             content = content.replace(image_url, image_path)
@@ -79,7 +83,9 @@ class ImagePull:
                 continue
             # 将 attach_path 路径中 attachments 之前的路径去掉，只保留以 attachments 开头的之后的路径
             if self.is_relative_path:
-                attach_path = attach_path[attach_path.find(ATTACH) :]
+                idx = attach_path.find(ATTACH)
+                if idx >= 0:
+                    attach_path = attach_path[idx:]
             content = content.replace(attach_url, attach_path)
 
         with open(file_path, "wb") as f:
@@ -150,17 +156,11 @@ class ImagePull:
                 else "jpg"
             )
 
-        local_file_dir = None
-        # 如果 file_name 中不包含 . 号
-        if file_path.find(".") == -1:
-            local_file_dir = os.path.join(self.root_local_dir, file_dirname).replace(
-                "\\", "/"
-            )
-        else:
-            # 截取字符串 file_path 中文件夹全路径(即实现在具体文件夹目录下再生成图片文件夹路径，而非在根目录生成图片文件夹路径)
-            local_file_dir = os.path.join(
-                file_path[: file_path.rfind("/")], file_dirname
-            ).replace("\\", "/")
+        # 在笔记文件所在目录下创建图片/附件子目录
+        file_dir = os.path.dirname(file_path)
+        if not file_dir:
+            file_dir = "."
+        local_file_dir = os.path.join(file_dir, file_dirname).replace("\\", "/")
 
         if not os.path.exists(local_file_dir):
             os.mkdir(local_file_dir)
@@ -170,25 +170,21 @@ class ImagePull:
         realUrl = parse.parse_qs(urlparse(response.url).query)
 
         if realUrl:
-            filename = (
-                realUrl.get("filename")[0]
-                if realUrl.get("filename")
-                else realUrl.get("download")[0]
-                if realUrl.get("download")
-                else ""
-            )
+            fn_list = realUrl.get("filename") or realUrl.get("download") or []
+            filename = fn_list[0] if fn_list else ""
             file_name = file_basename + filename
         else:
             file_name = "".join([file_basename, file_suffix])
         local_file_path = os.path.join(local_file_dir, file_name).replace("\\", "/")
+        local_file_path = safe_long_path(local_file_path)
 
         try:
             with open(local_file_path, "wb") as f:
                 f.write(response.content)  # response.content 本身就为字节类型
             logging.info("已将{}「{}」转换为「{}」".format(file_type, url, local_file_path))
-        except:
-            error_msg = "{} {}有误！".format(url, file_type)
-            logging.info(error_msg)
+        except Exception as e:
+            error_msg = "{} {}有误！错误: {}".format(url, file_type, e)
+            logging.warning(error_msg)
             return ""
 
         return local_file_path
@@ -223,8 +219,8 @@ class ImageUpload(object):
         """
         try:
             smfile = youdaonote_api.http_get(image_url).content
-        except:
-            error_msg = "下载「{}」失败！图片可能已失效，可浏览器登录有道云笔记后，查看图片是否能正常加载".format(image_url)
+        except Exception as e:
+            error_msg = "下载「{}」失败！图片可能已失效: {}".format(image_url, e)
             return "", error_msg
         files = {"smfile": smfile}
         upload_api_url = "https://sm.ms/api/v2/upload"

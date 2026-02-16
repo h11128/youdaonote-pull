@@ -91,14 +91,17 @@ class XmlElementConvert(object):
         element = kwargs.get("element")
         content = XmlElementConvert.get_text_by_key(element, "content")
 
-        table_data_str = f""  # f-string 多行字符串
-        nl = "\r\n"  # 考虑 Windows 系统，换行符设为 \r\n
-        table_data = json.loads(content)
-        table_data_len = len(table_data["widths"])
+        table_data_str = ""
+        nl = "\r\n"
+        try:
+            table_data = json.loads(content)
+        except (json.JSONDecodeError, TypeError):
+            return content if content else ""
+        table_data_len = len(table_data.get("widths", []))
         table_data_arr = []
         table_data_line = []
 
-        for cells in table_data["cells"]:
+        for cells in table_data.get("cells", []):
             values = cells.get("value")
             if values is None:
                 values = ""
@@ -249,29 +252,36 @@ class JsonConvert(object):
 
     def convert_h_func(self, content) -> str:
         """标题"""
-        type_name = content.get("4").get("l")
+        four = content.get("4") or {}
+        type_name = four.get("l")
         text = self._get_common_text(content=content)
         if text and type_name:
             level_str = type_name.replace("h", "")
-            level = int(level_str)
-            text = " ".join(["#" * int(level), text])
+            try:
+                level = int(level_str)
+            except ValueError:
+                level = 1
+            text = " ".join(["#" * level, text])
         return text
 
     def convert_im_func(self, content):
         """图片"""
-        image_url = content["4"]["u"]
+        four = content.get("4") or {}
+        image_url = four.get("u", "")
         return "![]({image_url})".format(image_url=image_url)
 
     def convert_a_func(self, content):
         """附件"""
-        fn = content["4"]["fn"]
-        fl = content["4"]["re"]
+        four = content.get("4") or {}
+        fn = four.get("fn", "")
+        fl = four.get("re", "")
         return "[{text}]({resource_url})".format(text=fn, resource_url=fl)
 
     def convert_cd_func(self, content):
         """代码块"""
-        language = content.get("4").get("la")
-        codes: list = content.get("5")
+        four = content.get("4") or {}
+        language = four.get("la", "")
+        codes: list = content.get("5") or []
         code_block = ""
         for code in codes:
             text = self._get_common_text(code)
@@ -293,7 +303,7 @@ class JsonConvert(object):
 
     def convert_q_func(self, content):
         """引用"""
-        q_text_list = content["5"]
+        q_text_list = content.get("5") or []
         text = ""
         for q_text_dict in q_text_list:
             q_text = self._get_common_text(q_text_dict)
@@ -305,34 +315,38 @@ class JsonConvert(object):
     def convert_l_func(self, content):
         """有序列表和无序列表，有序列表转成无序列表"""
         text = self._get_common_text(content=content)
-        is_ordered = content.get("4").get("lt")
+        four = content.get("4") or {}
+        is_ordered = four.get("lt", "unordered")
         if is_ordered == "unordered":
-            level = content.get("4").get("ll")
+            level = four.get("ll", 1) or 1
             return "\t" * (level - 1) + "- {text}".format(text=text)
         elif is_ordered == "ordered":
-            # 有序列表都设置为 1，有些 MD 编辑自动转为有序列表
             return "1. {text}".format(text=text)
 
     def convert_t_func(self, content):
         """
         表格转换
         """
-        nl = "\r\n"  # 考虑 Windows 系统，换行符设为 \r\n
-        tr_list = content["5"]
+        nl = "\r\n"
+        tr_list = content.get("5") or []
+        if not tr_list:
+            return ""
         table_lines = ""
 
         for index, tc in enumerate(tr_list):
-            table_content_list = tc["5"]
+            table_content_list = tc.get("5") or []
             table_content_len = len(table_content_list)
             if index == 1:
                 table_line = "| -- " * table_content_len + "|\n| "
             else:
                 table_line = "| "
             for table_content in table_content_list:
-                table_text_list = table_content.get("5")[0].get("5")[0].get("7")
-                if table_text_list:
-                    table_text = table_text_list[0]["8"]
-                else:
+                try:
+                    inner_5 = (table_content.get("5") or [{}])[0]
+                    inner_5_2 = (inner_5.get("5") or [{}])[0]
+                    table_text_list = inner_5_2.get("7")
+                    table_text = table_text_list[0].get("8", " ") if table_text_list else " "
+                except (IndexError, AttributeError, TypeError):
                     table_text = " "
                 table_line = table_line + table_text + " | "
             table_lines = table_lines + table_line + f"{nl}"
@@ -422,7 +436,10 @@ class YoudaoNoteConvert(object):
                 logging.error(e)
                 json_data = {}
 
-        json_contents = json_data["5"]  # 3 代表 id，4 代表信息，5 代表内容，6 代表类型
+        json_contents = json_data.get("5")
+        if not json_contents:
+            logging.warning("JSON 笔记缺少 '5' 内容字段，跳过转换")
+            return ""
         for content in json_contents:
             type = content.get("6")
             # 根据类型处理，无类型的为普通文本

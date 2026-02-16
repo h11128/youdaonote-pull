@@ -19,14 +19,18 @@ venv/
 config/cookies.json
 config/browser_data/
 config/sync_metadata.json
+captured_api_requests.json
 logs/
 backups/
 *.backup.*
 test-pull/
 
-# 导出目录（用户生成）
-youdaonote/
+# 导出目录（用户生成的笔记文件，非源码）
 youdaonote-export/
+
+# youdaonote/ 是 Python 源码包，不能忽略
+# 但包目录下的用户运行时产物需要忽略
+youdaonote/**/*.pyc
 
 # 构建产物
 build/

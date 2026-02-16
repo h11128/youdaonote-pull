@@ -459,7 +459,8 @@ def cmd_gui(args):
 
 def cmd_sync(args):
     """执行 sync 命令 - 双向同步"""
-    from youdaonote.sync import SyncManager, SyncDirection, SyncWatcher
+    from youdaonote.sync import SyncManager, SyncDirection
+    from youdaonote.watcher import SyncWatcher
     
     # 加载配置
     config, error = load_config()

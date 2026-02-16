@@ -6,6 +6,7 @@
 """
 
 import json
+import logging
 import os
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
@@ -106,11 +107,9 @@ class CookieManager:
             script_dir = get_script_directory()
             backups_dir = os.path.join(script_dir, "backups")
             
-            # 如果 backups 目录存在，使用它；否则使用同目录
-            if os.path.exists(backups_dir):
-                backup_path = os.path.join(backups_dir, f"cookies.json.backup.{timestamp}")
-            else:
-                backup_path = f"{cookies_path}.backup.{timestamp}"
+            # 确保 backups 目录存在
+            os.makedirs(backups_dir, exist_ok=True)
+            backup_path = os.path.join(backups_dir, f"cookies.json.backup.{timestamp}")
 
             # 复制文件
             with open(cookies_path, 'r', encoding='utf-8') as f:
@@ -121,7 +120,7 @@ class CookieManager:
             return backup_path
 
         except Exception as e:
-            print(f"⚠️ 备份失败: {e}")
+            logging.warning(f"备份失败: {e}")
             return None
 
     @staticmethod
@@ -196,7 +195,7 @@ class CookieManager:
         # 尝试从各个浏览器提取
         for browser_name, browser_func in browsers:
             try:
-                cj = browser_func(domain_name='youdao.com')
+                cj = browser_func(domain_name='.note.youdao.com')
 
                 for cookie in cj:
                     if cookie.name in CookieManager.REQUIRED_COOKIES:
